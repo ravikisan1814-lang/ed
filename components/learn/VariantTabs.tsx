@@ -7,53 +7,30 @@ interface VariantTabsProps {
   locked: boolean;
 }
 
-/**
- * Interactive multi-type tab bar ([ Type 1 ] [ Type 2 ] [ Type 3 ]).
- *
- * - Type 1 is the canonical locked_payload.
- * - Type 2+ come from content_items.variants (JSONB) via the DB gate.
- * - When the item is locked, the tabs are still rendered (labels only) so
- *   visitors can see the variation structure, but switching does NOT reveal
- *   content — the locked-section blur overlay stays in place.
- */
-export default function VariantTabs({
-  labels,
-  activeIndex,
-  onSelect,
-  locked,
-}: VariantTabsProps) {
-  if (!labels || labels.length === 0) {
-    return null;
-  }
+export default function VariantTabs({ labels, activeIndex, onSelect, locked }: VariantTabsProps) {
+  if (locked || labels.length === 0) return null;
 
   return (
-    <div
-      className="variant-tabs"
-      role="tablist"
-      aria-label="Content variants"
-      data-testid="variant-tabs"
-    >
-      {labels.map((label, index) => {
-        const selected = index === activeIndex;
-        return (
-          <button
-            key={`${label}-${index}`}
-            type="button"
-            role="tab"
-            aria-selected={selected}
-            aria-controls="variant-panel"
-            id={`variant-tab-${index}`}
-            className={`variant-tab${selected ? " variant-tab-active" : ""}${
-              locked ? " variant-tab-locked" : ""
-            }`}
-            data-testid={`variant-tab-${index}`}
-            onClick={() => onSelect(index)}
-          >
-            {label}
-            {locked && <span className="variant-tab-lock">🔒</span>}
-          </button>
-        );
-      })}
+    <div className="content-tabs" role="region" aria-label="Content variants">
+      <div className="content-tabs-header">
+        <h2 className="content-tabs-title">Learning Modes</h2>
+        <div className="content-tabs-list" role="tablist" aria-label="Select content variant">
+          {labels.map((label, idx) => (
+            <button
+              key={idx}
+              role="tab"
+              aria-selected={activeIndex === idx}
+              aria-controls={`panel-${idx}`}
+              id={`tab-${idx}`}
+              className={`content-tab-btn ${activeIndex === idx ? "content-tab-btn-active" : ""}`}
+              onClick={() => onSelect(idx)}
+              disabled={locked}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

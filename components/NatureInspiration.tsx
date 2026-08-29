@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 const NATURE_LINES = [
-  "The forest teaches patience — every seed waits for its season.",
-  "Rivers never rush their journey; they simply keep moving forward.",
-  "Mountains remind us: the view is worth every step of the climb.",
-  "Morning dew on a leaf — small wonders hold the deepest lessons.",
-  "A tree grows in silence; your progress need not be loud to be real.",
-  "Stars appear only when the sky grows dark — keep going.",
-  "Every sunset promises a fresh dawn for those who rest and rise again.",
+  "Nature does not hurry, yet everything is accomplished. — Lao Tzu",
+  "Look deep into nature, and then you will understand everything better. — Einstein",
+  "In every walk with nature, one receives far more than he seeks. — John Muir",
+  "The earth has music for those who listen. — Shakespeare",
+  "Adopt the pace of nature: her secret is patience. — Ralph Waldo Emerson",
+  "Nature is not a place to visit. It is home. — Gary Snyder",
+  "The clearest way into the Universe is through a forest wilderness. — John Muir",
+  "Study nature, love nature, stay close to nature. It will never fail you. — Frank Lloyd Wright",
 ];
 
 export default function NatureInspiration() {
@@ -22,21 +23,23 @@ export default function NatureInspiration() {
       setTimeout(() => {
         setLineIndex((i) => (i + 1) % NATURE_LINES.length);
         setVisible(true);
-      }, 400);
-    }, 6000);
+      }, 300);
+    }, 5000);
+
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="nature-inspire" aria-live="polite">
+    <div className="nature-inspire" role="region" aria-label="Daily inspiration" aria-live="polite">
       <div className="nature-inspire-inner">
-        <span className="nature-inspire-icon" aria-hidden="true">
-          🌿
-        </span>
-        <p className={`nature-inspire-line${visible ? " nature-inspire-line--visible" : ""}`}>
+        <span className="nature-inspire-icon" aria-hidden="true">🌿</span>
+        <p
+          className={`nature-inspire-line ${visible ? "nature-inspire-line--visible" : ""}`}
+          aria-hidden={!visible}
+        >
           {NATURE_LINES[lineIndex]}
         </p>
       </div>
-    </section>
+    </div>
   );
 }

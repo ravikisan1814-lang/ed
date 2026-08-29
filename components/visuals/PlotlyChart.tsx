@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { Data, Layout, Config } from "plotly.js";
+import { useEffect, useRef } from "react";
+import type { Data, Layout, Config } from "plotly.js-dist-min";
 
 interface PlotlyChartProps {
   data: Data[];
@@ -11,66 +11,66 @@ interface PlotlyChartProps {
   className?: string;
 }
 
-/**
- * Minimal Plotly wrapper around plotly.js-dist-min (MIT, 0 runtime deps).
- *
- * - Imported via dynamic import inside the effect, so the ~4 MB Plotly
- *   bundle is only fetched when a chart is actually rendered.
- * - Renders server-side safe (plain div; the graph is painted in an effect).
- * - Re-plots when the serialized figure changes (purge + newPlot) and
- *   purges the DOM/WebGL resources on unmount.
- */
-export default function PlotlyChart({
-  data,
-  layout,
-  config,
-  height = 320,
-  className,
-}: PlotlyChartProps) {
+export default function PlotlyChart({ data, layout, config, height = 400, className }: PlotlyChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [figureKey, setFigureKey] = useState(() =>
-    JSON.stringify({ data, layout, config })
-  );
-
-  useEffect(() => {
-    setFigureKey(JSON.stringify({ data, layout, config }));
-  }, [data, layout, config]);
+  const plotlyRef = useRef<any>(null);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     let cancelled = false;
-    let plotly: typeof import("plotly.js-dist-min") | null = null;
-    let graph: unknown = null;
 
-    (async () => {
-      const Plotly = await import("plotly.js-dist-min");
-      if (cancelled || !container) return;
-      plotly = Plotly;
-      graph = await Plotly.newPlot(container, data, layout, config);
-    })().catch(() => {
-      if (!cancelled) {
-        container.textContent = "Chart failed to render.";
+    async function init() {
+      try {
+        const plotly = await import("plotly.js-dist-min");
+        if (cancelled || !container) return;
+
+        if (plotlyRef.current) {
+          plotlyRef.current.close();
+          plotlyRef.current = null;
+        }
+
+        plotlyRef.current = await plotly.newPlot(container, data, layout, config || {});
+
+        const resize = () => {
+          if (cancelled || !container) return;
+          plotly.react(container, data, layout, config || {});
+        };
+
+        const observer = new ResizeObserver(resize);
+        observer.observe(container);
+
+        return () => {
+          observer.disconnect();
+        };
+      } catch (err) {
+        console.error("PlotlyChart initialization failed:", err);
+        if (!cancelled && containerRef.current) {
+          containerRef.current.textContent = "Chart failed to load.";
+          containerRef.current.setAttribute("role", "alert");
+        }
       }
-    });
+    }
+
+    init();
 
     return () => {
       cancelled = true;
-      if (graph && plotly) plotly.purge(graph as never);
-      graph = null;
+      if (plotlyRef.current) {
+        plotlyRef.current.close();
+        plotlyRef.current = null;
+      }
     };
-    // Data/layout/config are captured above; figureKey guards re-plots.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [figureKey]);
+  }, [data, layout, config]);
 
   return (
     <div
       ref={containerRef}
       className={className ?? "plotly-chart"}
-      style={{ minHeight: height }}
+      style={{ height }}
+      aria-label="Interactive chart visualization"
       role="img"
-      aria-label="Interactive chart"
     />
   );
 }

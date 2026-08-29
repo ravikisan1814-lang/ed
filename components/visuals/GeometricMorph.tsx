@@ -6,131 +6,121 @@ import type * as THREE from "three";
 interface GeometricMorphProps {
   type?: "cube" | "sphere" | "torus" | "icosahedron";
   morphSpeed?: number;
+  className?: string;
 }
 
-export default function GeometricMorph({ type = "torus", morphSpeed = 1 }: GeometricMorphProps) {
-  const mountRef = useRef<HTMLDivElement>(null);
+export default function GeometricMorph({ type = "cube", morphSpeed = 1, className }: GeometricMorphProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const animFrameRef = useRef<number>(0);
 
   useEffect(() => {
-    const mount = mountRef.current;
-    if (!mount) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     let cancelled = false;
-    let cleanup: (() => void) | null = null;
+    let cleanupFn: (() => void) | null = null;
 
-    (async () => {
-      const THREE = await import("three");
-      if (cancelled || !mount) return;
+    async function init() {
+      try {
+        const THREE = await import("three");
+        if (cancelled || !container || container.clientWidth === 0) return;
 
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(60, mount.clientWidth / mount.clientHeight, 0.1, 100);
-      camera.position.z = 5;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.z = 5;
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(mount.clientWidth, mount.clientHeight);
-      mount.appendChild(renderer.domElement);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
 
-      const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-      scene.add(ambient);
-      const pointLight = new THREE.PointLight(0x60a5fa, 1.5);
-      pointLight.position.set(3, 3, 3);
-      scene.add(pointLight);
+        const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambient);
+        const directional = new THREE.DirectionalLight(0xffffff, 0.8);
+        directional.position.set(5, 5, 5);
+        scene.add(directional);
 
-      // Create morphing geometry
-      const geometries = [
-        new THREE.TorusGeometry(1.2, 0.4, 32, 64),
-        new THREE.SphereGeometry(1.2, 32, 32),
-        new THREE.BoxGeometry(1.6, 1.6, 1.6),
-        new THREE.IcosahedronGeometry(1.2, 1),
-      ];
+        let mesh: THREE.Mesh;
+        const material = new THREE.MeshStandardMaterial({
+          color: 0x3b82f6,
+          metalness: 0.3,
+          roughness: 0.4,
+          wireframe: false,
+        });
 
-      const geoIndices: Record<string, number[]> = {
-        torus: [0, 1],
-        sphere: [1, 2],
-        cube: [2, 3],
-        icosahedron: [3, 0],
-      };
-      const [fromIdx, toIdx] = geoIndices[type] ?? [0, 1];
-      const fromGeo = geometries[fromIdx];
-      const toGeo = geometries[toIdx];
-
-      const material = new THREE.MeshStandardMaterial({
-        color: 0x3b82f6,
-        metalness: 0.4,
-        roughness: 0.3,
-        wireframe: false,
-        emissive: 0x1e3a8a,
-        emissiveIntensity: 0.2,
-      });
-      const wireMat = new THREE.MeshBasicMaterial({
-        color: 0x60a5fa,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.15,
-      });
-
-      const mesh = new THREE.Mesh(fromGeo.clone(), material);
-      const wireMesh = new THREE.Mesh(fromGeo.clone(), wireMat);
-      mesh.add(wireMesh);
-      scene.add(mesh);
-
-      const clock = new THREE.Clock();
-      let frame = 0;
-
-      function animate() {
-        frame = requestAnimationFrame(animate);
-        const t = clock.getElapsedTime() * morphSpeed;
-
-        // Morph between geometries using interpolation
-        const morphT = (Math.sin(t * 0.5) + 1) / 2; // 0 to 1 oscillating
-        const positions1 = fromGeo.attributes.position.array as Float32Array;
-        const positions2 = toGeo.attributes.position.array as Float32Array;
-        const meshPositions = mesh.geometry.attributes.position.array as Float32Array;
-        const wirePositions = wireMesh.geometry.attributes.position.array as Float32Array;
-
-        for (let i = 0; i < positions1.length; i++) {
-          meshPositions[i] = positions1[i] * (1 - morphT) + positions2[i] * morphT;
-          wirePositions[i] = meshPositions[i];
+        switch (type) {
+          case "cube":
+            mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), material);
+            break;
+          case "sphere":
+            mesh = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), material);
+            break;
+          case "torus":
+            mesh = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.4, 16, 100), material);
+            break;
+          case "icosahedron":
+            mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(1.3, 0), material);
+            break;
+          default:
+            mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), material);
         }
-        mesh.geometry.attributes.position.needsUpdate = true;
-        wireMesh.geometry.attributes.position.needsUpdate = true;
 
-        mesh.rotation.y = t * 0.3;
-        mesh.rotation.x = Math.sin(t * 0.2) * 0.3;
-        wireMesh.rotation.copy(mesh.rotation);
+        scene.add(mesh);
 
-        renderer.render(scene, camera);
+        const resize = () => {
+          const w = container.clientWidth;
+          const h = container.clientHeight;
+          if (w === 0 || h === 0) return;
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        };
+
+        const observer = new ResizeObserver(resize);
+        observer.observe(container);
+
+        const clock = new THREE.Clock();
+        const animate = () => {
+          animFrameRef.current = requestAnimationFrame(animate);
+          const t = clock.getElapsedTime() * morphSpeed;
+          mesh.rotation.x = t * 0.5;
+          mesh.rotation.y = t * 0.3;
+          renderer.render(scene, camera);
+        };
+        animate();
+
+        cleanupFn = () => {
+          cancelAnimationFrame(animFrameRef.current);
+          observer.disconnect();
+          renderer.dispose();
+          if (renderer.domElement.parentNode === container) {
+            container.removeChild(renderer.domElement);
+          }
+        };
+      } catch (err) {
+        console.error("GeometricMorph initialization failed:", err);
+        if (!cancelled && containerRef.current) {
+          containerRef.current.textContent = "3D visualization failed to load.";
+          containerRef.current.setAttribute("role", "alert");
+        }
       }
-      animate();
+    }
 
-      const resize = () => {
-        if (!mount) return;
-        const w = mount.clientWidth;
-        const h = mount.clientHeight;
-        camera.aspect = w / h;
-        camera.updateProjectionMatrix();
-        renderer.setSize(w, h);
-      };
-      window.addEventListener("resize", resize);
-
-      cleanup = () => {
-        cancelAnimationFrame(frame);
-        window.removeEventListener("resize", resize);
-        renderer.dispose();
-        fromGeo.dispose();
-        toGeo.dispose();
-        material.dispose();
-        wireMat.dispose();
-        if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
-      };
-    })().catch(() => {});
+    init();
 
     return () => {
       cancelled = true;
-      cleanup?.();
+      cleanupFn?.();
     };
   }, [type, morphSpeed]);
 
-  return <div ref={mountRef} className="geometric-morph" />;
+  return (
+    <div
+      ref={containerRef}
+      className={className ?? "three-scene"}
+      aria-label={`Interactive ${type} visualization - drag to rotate`}
+      role="img"
+      tabIndex={0}
+    />
+  );
 }

@@ -1,95 +1,126 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import type * as THREE from "three";
 
 interface ParticleFieldProps {
   count?: number;
   color?: string;
   speed?: number;
   size?: number;
+  className?: string;
 }
 
-export default function ParticleField({ count = 80, color = "#60a5fa", speed = 0.5, size = 3 }: ParticleFieldProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Array<{ x: number; y: number; vx: number; vy: number; life: number }>>([]);
-  const animRef = useRef<number>(0);
-  const [mounted, setMounted] = useState(false);
+export default function ParticleField({ count = 200, color = "#60a5fa", speed = 1, size = 0.05, className }: ParticleFieldProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const animFrameRef = useRef<number>(0);
 
   useEffect(() => {
-    setMounted(true);
-    const canvas = canvasRef.current!
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D | null;
-    if (!ctx) return;
+    let cancelled = false;
+    let cleanupFn: (() => void) | null = null;
 
-    function resize() {
-      const parent = canvas.parentElement;
-      if (!parent) return;
-      canvas.width = parent.clientWidth;
-      canvas.height = parent.clientHeight;
-    }
-    resize();
-    window.addEventListener("resize", resize);
+    async function init() {
+      try {
+        const THREE = await import("three");
+        if (cancelled || !container || container.clientWidth === 0) return;
 
-    particlesRef.current = Array.from({ length: count }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * speed,
-      vy: (Math.random() - 0.5) * speed,
-      life: Math.random(),
-    }));
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.z = 5;
 
-    function animate() {
-      (ctx as CanvasRenderingContext2D).clearRect(0, 0, canvas.width, canvas.height);
-      const particles = particlesRef.current;
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
 
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life += 0.005;
+        const particles = new THREE.BufferGeometry();
+        const positions = new Float32Array(count * 3);
+        const colors = new Float32Array(count * 3);
 
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
+        const colorObj = new THREE.Color(color);
 
-        const alpha = 0.3 + Math.sin(p.life * Math.PI * 2) * 0.3;
-        (ctx as CanvasRenderingContext2D).beginPath();
-        (ctx as CanvasRenderingContext2D).arc(p.x, p.y, size, 0, Math.PI * 2);
-        (ctx as CanvasRenderingContext2D).fillStyle = color + Math.floor(alpha * 255).toString(16).padStart(2, "0");
-        (ctx as CanvasRenderingContext2D).fill();
-      }
+        for (let i = 0; i < count; i++) {
+          positions[i * 3] = (Math.random() - 0.5) * 10;
+          positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+          positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
 
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 100) {
-            const alpha = (1 - dist / 100) * 0.15;
-            (ctx as CanvasRenderingContext2D).beginPath();
-            (ctx as CanvasRenderingContext2D).moveTo(particles[i].x, particles[i].y);
-            (ctx as CanvasRenderingContext2D).lineTo(particles[j].x, particles[j].y);
-            (ctx as CanvasRenderingContext2D).strokeStyle = color + Math.floor(alpha * 255).toString(16).padStart(2, "0");
-            (ctx as CanvasRenderingContext2D).lineWidth = 0.5;
-            (ctx as CanvasRenderingContext2D).stroke();
+          colors[i * 3] = colorObj.r;
+          colors[i * 3 + 1] = colorObj.g;
+          colors[i * 3 + 2] = colorObj.b;
+        }
+
+        particles.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+        particles.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({
+          size,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.8,
+        });
+
+        const particleSystem = new THREE.Points(particles, material);
+        scene.add(particleSystem);
+
+        const resize = () => {
+          const w = container.clientWidth;
+          const h = container.clientHeight;
+          if (w === 0 || h === 0) return;
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        };
+
+        const observer = new ResizeObserver(resize);
+        observer.observe(container);
+
+        const clock = new THREE.Clock();
+        const animate = () => {
+          animFrameRef.current = requestAnimationFrame(animate);
+          const t = clock.getElapsedTime() * speed;
+          particleSystem.rotation.y = t * 0.1;
+          particleSystem.rotation.x = Math.sin(t * 0.05) * 0.1;
+          renderer.render(scene, camera);
+        };
+        animate();
+
+        cleanupFn = () => {
+          cancelAnimationFrame(animFrameRef.current);
+          observer.disconnect();
+          renderer.dispose();
+          particles.dispose();
+          material.dispose();
+          if (renderer.domElement.parentNode === container) {
+            container.removeChild(renderer.domElement);
           }
+        };
+      } catch (err) {
+        console.error("ParticleField initialization failed:", err);
+        if (!cancelled && containerRef.current) {
+          containerRef.current.textContent = "Particle visualization failed to load.";
+          containerRef.current.setAttribute("role", "alert");
         }
       }
-
-      animRef.current = requestAnimationFrame(animate);
     }
-    animate();
+
+    init();
 
     return () => {
-      cancelAnimationFrame(animRef.current);
-      window.removeEventListener("resize", resize);
+      cancelled = true;
+      cleanupFn?.();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count, color, speed, size]);
 
-  if (!mounted) return <div className="particle-field-placeholder" />;
-
-  return <canvas ref={canvasRef} className="particle-field" aria-label="Animated particle field background" />;
+  return (
+    <div
+      ref={containerRef}
+      className={className ?? "three-scene"}
+      aria-label="Animated particle field visualization"
+      role="img"
+      tabIndex={0}
+    />
+  );
 }

@@ -1,106 +1,146 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import LockedSection from "./learn/LockedSection";
+import { useState } from "react";
+import Link from "next/link";
+import ErrorBoundary from "./ErrorBoundary";
 import type { ContentItemDetail } from "@/lib/types";
-import { ACCESS_LEVEL_LABELS } from "@/lib/types";
-import { isContentLockedFor } from "@/lib/access";
 
 interface TopicContentViewProps {
   content: ContentItemDetail | null;
   userAccessLevel: number;
+  topicTitle?: string;
+  figureType?: string;
 }
 
-export function TopicContentView({
-  content,
-  userAccessLevel,
-}: TopicContentViewProps) {
+export default function TopicContentView({ content, userAccessLevel, topicTitle, figureType }: TopicContentViewProps) {
   const [activeVariant, setActiveVariant] = useState(0);
-
-  const locked = useMemo(
-    () =>
-      content
-        ? isContentLockedFor(
-            userAccessLevel as 1 | 2 | 3 | 4,
-            content.access_level as 1 | 2 | 3 | 4
-          )
-        : false,
-    [content, userAccessLevel]
-  );
 
   if (!content) {
     return (
-      <div className="viewer" data-testid="topic-content-view">
-        <div className="card viewer-error">
-          <p>No content available for this topic yet.</p>
-        </div>
+      <div role="status" aria-live="polite" className="under-development">
+        <span className="ud-icon" aria-hidden="true">⏳</span>
+        Loading content...
       </div>
     );
   }
 
-  const labels =
-    content.variant_labels.length > 0
-      ? content.variant_labels
-      : ["Type 1"];
-
-  const activeIndex = Math.min(activeVariant, labels.length - 1);
-
-  const activeVariantContent =
-    !locked && content.variants && content.variants.length > 0
-      ? content.variants[activeIndex - 1] ?? null
-      : null;
+  const isLocked = content.is_locked && content.access_level > userAccessLevel;
 
   return (
-    <div className="viewer" data-testid="topic-content-view">
-      <article className="content-item">
-        <header className="content-item-header">
+    <ErrorBoundary
+      fallback={
+        <div role="alert" aria-live="assertive" className="error-boundary">
+          <h2>Failed to load content</h2>
+          <p>Please try refreshing the page or contact support.</p>
+          <button onClick={() => window.location.reload()}>Refresh page</button>
+        </div>
+      }
+    >
+      <article className="content-item" aria-label={`Content: ${content.title}`}>
+        <div className="content-item-header">
           <h1 className="content-item-title">{content.title}</h1>
-          <span
-            className={`badge ${locked ? "badge-locked" : "badge-open"}`}
-          >
-            {locked
-              ? `${ACCESS_LEVEL_LABELS[content.access_level as 1 | 2 | 3 | 4]} tier`
-              : "Open"}
+          <span className={`badge ${isLocked ? "badge-locked" : "badge-open"}`}>
+            {isLocked ? `Locked (${content.access_level})` : "Open"}
           </span>
-        </header>
+        </div>
 
-        {content.public_teaser ? (
-          <section
-            className="public-concept"
-            data-testid="public-concept"
-            dangerouslySetInnerHTML={{ __html: content.public_teaser }}
-          />
-        ) : null}
+        {content.public_teaser && (
+          <div className="public-concept" aria-label="Public preview">
+            <p>{content.public_teaser}</p>
+          </div>
+        )}
 
-        <section id="variant-panel" role="tabpanel" className="variant-panel">
-          {locked ? (
-            <LockedSection
-              requiredAccessLevel={content.access_level as 1 | 2 | 3 | 4}
-              ownerContact={content.owner_contact}
-            />
-          ) : activeIndex === 0 ? (
-            <div
-              className="locked-payload"
-              data-testid="locked-payload"
-              dangerouslySetInnerHTML={{
-                __html: content.locked_payload ?? "",
-              }}
-            />
-          ) : activeVariantContent ? (
-            <div
-              className="locked-payload"
-              data-testid="locked-payload"
-              dangerouslySetInnerHTML={{ __html: activeVariantContent.content }}
-            />
-          ) : (
-            <div
-              className="locked-payload"
-              data-testid="locked-payload"
-              dangerouslySetInnerHTML={{ __html: content.locked_payload ?? "" }}
-            />
-          )}
-        </section>
+        {isLocked ? (
+          <div className="locked-payload" role="region" aria-label="Locked content preview">
+            <h3>🔒 This content is locked</h3>
+            <p>
+              {content.owner_contact ? (
+                <>
+                  Contact the owner at{" "}
+                  <a href={`mailto:${content.owner_contact}`} className="ai-chat-link">
+                    {content.owner_contact}
+                  </a>{" "}
+                  to request access.
+                </>
+              ) : (
+                "Contact the platform administrator to request access."
+              )}
+            </p>
+          </div>
+        ) : (
+          <>
+            {content.locked_payload && (
+              <div className="locked-payload" role="region" aria-label="Full content">
+                {content.locked_payload.statements?.map((stmt, i) => (
+                  <p key={i}>{stmt}</p>
+                ))}
+                {content.locked_payload.bullet_points?.map((point, i) => (
+                  <ul key={i}>
+                    <li>{point}</li>
+                  </ul>
+                ))}
+                {content.locked_payload.examples?.map((ex, i) => (
+                  <p key={i}><strong>Example {i + 1}:</strong> {ex}</p>
+                ))}
+                {content.locked_payload.past_year_questions?.map((q, i) => (
+                  <p key={i}><strong>PYQ {i + 1}:</strong> {q}</p>
+                ))}
+              </div>
+            )}
+
+            {content.variants && content.variants.length > 0 && (
+              <div className="variant-panel" role="region" aria-label="Content variants">
+                <div className="content-tabs">
+                  <div className="content-tabs-header">
+                    <h2 className="content-tabs-title">Learning Modes</h2>
+                    <div className="content-tabs-list" role="tablist" aria-label="Select content variant">
+                      {content.variants.map((variant, idx) => (
+                        <button
+                          key={idx}
+                          role="tab"
+                          aria-selected={activeVariant === idx}
+                          aria-controls={`panel-${idx}`}
+                          id={`tab-${idx}`}
+                          className={`content-tab-btn ${activeVariant === idx ? "content-tab-btn-active" : ""}`}
+                          onClick={() => setActiveVariant(idx)}
+                        >
+                          {variant.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {content.variants.map((variant, idx) => (
+                    <div
+                      key={idx}
+                      role="tabpanel"
+                      id={`panel-${idx}`}
+                      aria-labelledby={`tab-${idx}`}
+                      className={`content-tab-panel ${activeVariant === idx ? "" : "hidden"}`}
+                      hidden={activeVariant !== idx}
+                    >
+                      <div className="tab-content">
+                        <h3>{variant.label}</h3>
+                        <pre className="journal-textarea" style={{ whiteSpace: "pre-wrap", readOnly: true }} aria-label={variant.label}>
+                          {variant.note}
+                        </pre>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {content.owner_contact && !isLocked && (
+          <p className="locked-overlay-mail">
+            Content by:{" "}
+            <a href={`mailto:${content.owner_contact}`} aria-label={`Contact ${content.owner_contact}`}>
+              {content.owner_contact}
+            </a>
+          </p>
+        )}
       </article>
-    </div>
+    </ErrorBoundary>
   );
 }

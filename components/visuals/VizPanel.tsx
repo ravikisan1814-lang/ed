@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
+import type { ReactNode } from "react";
 
 interface VizPanelProps {
   title: string;
@@ -10,36 +11,41 @@ interface VizPanelProps {
   actions?: ReactNode;
 }
 
-/**
- * Collapsible card used to gate heavy visualization payloads (Plotly,
- * three.js, JSON viewers). The children are only mounted once the panel is
- * opened, so deep-linked chunks (next/dynamic, ssr:false) are fetched on
- * demand instead of on first paint.
- */
-export default function VizPanel({
-  title,
-  children,
-  defaultOpen = false,
-  testId,
-  actions,
-}: VizPanelProps) {
-  const [open, setOpen] = useState(defaultOpen);
+export default function VizPanel({ title, children, defaultOpen = true, testId, actions }: VizPanelProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="viz-panel" data-testid={testId}>
+    <div className="viz-panel" data-testid={testId} role="region" aria-label={title}>
       <div className="viz-panel-header">
         <button
-          type="button"
           className="viz-panel-toggle"
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-controls={`viz-panel-body-${testId}`}
         >
-          <span className="viz-panel-caret">{open ? "▾" : "▸"}</span>
+          <svg
+            className={`viz-panel-caret ${isOpen ? "open" : ""}`}
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
           <span className="viz-panel-title">{title}</span>
         </button>
-        {actions ? <span className="viz-panel-actions">{actions}</span> : null}
+        {actions && <div className="viz-panel-actions">{actions}</div>}
       </div>
-      {open && <div className="viz-panel-body">{children}</div>}
+      {isOpen && (
+        <div className="viz-panel-body" id={`viz-panel-body-${testId}`} role="region">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
