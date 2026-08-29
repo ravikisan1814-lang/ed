@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, Line, OrbitControls, Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
@@ -102,6 +102,28 @@ const SAMPLE_PARTS: ModelPart[] = [
     ],
   },
 ];
+
+// ─── Responsive Camera ───────────────────────────────────────────────────────
+
+function ResponsiveCamera() {
+  const { camera } = useThree();
+  const prevWidth = useRef(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      prevWidth.current = width;
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [camera]);
+
+  return null;
+}
 
 // ─── Animated Part ───────────────────────────────────────────────────────────
 
@@ -254,6 +276,8 @@ function ControlButtons({
         display: "flex",
         gap: 10,
         zIndex: 10,
+        flexWrap: "wrap",
+        justifyContent: "center",
       }}
     >
       {[
@@ -400,7 +424,8 @@ export default function AnnotatedModelViewer({
         position: "relative",
         width: "100%",
         height: "100%",
-        minHeight: 520,
+        minHeight: "50vh",
+        maxHeight: "80vh",
         borderRadius: 16,
         overflow: "hidden",
         background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
@@ -412,6 +437,7 @@ export default function AnnotatedModelViewer({
         gl={{ antialias: true, alpha: false }}
         style={{ width: "100%", height: "100%" }}
       >
+        <ResponsiveCamera />
         <Scene
           selectedId={selectedId}
           onSelect={setSelectedId}
