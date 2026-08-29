@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 import { MeaningPanel, CollapsibleControls, LabCard, ResultBadge } from "./ui";
 
@@ -32,7 +32,7 @@ function FunctionGrapher() {
   const [expression, setExpression] = useState("x^2");
   const [cx, setCx] = useState<number | null>(null);
 
-  const draw = () => {
+  const draw = useCallback(() => {
     const c = canvasRef.current;
     if (!c) return;
     const dpr = window.devicePixelRatio || 1;
@@ -70,7 +70,7 @@ function FunctionGrapher() {
         ctx.fillText(`(${xv}, ${yv.toFixed(2)})`, cx + 8, py - 8);
       }
     }
-  };
+  }, [expression, cx]);
 
   useEffect(() => {
     draw();
@@ -79,7 +79,7 @@ function FunctionGrapher() {
     const ro = new ResizeObserver(draw);
     ro.observe(c);
     return () => ro.disconnect();
-  }, [expression]);
+  }, [draw]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 w-full">

@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 import { MeaningPanel, CollapsibleControls, LabCard, ResultBadge } from "./ui";
 
@@ -368,6 +368,10 @@ export default function ChemistryLab() {
   const [viewMode, setViewMode] = useState<"3d" | "2d">("3d");
   const [selectedMolecule, setSelectedMolecule] = useState("water");
 
+  const handleSelectElement = useCallback((el: typeof ALL_ELEMENTS[number]) => {
+    setSelectedElement(el);
+  }, []);
+
   const categories = [
     { key: "", label: "All" }, { key: "nonmetal", label: "Nonmetals" }, { key: "nobleGas", label: "Noble Gases" },
     { key: "alkaliMetal", label: "Alkali Metals" }, { key: "alkalineEarth", label: "Alkaline Earth" },
@@ -405,9 +409,9 @@ export default function ChemistryLab() {
 
       <LabCard title="Periodic Table" subtitle="118 Elements">
         {viewMode === "3d" ? (
-          <PeriodicTable3D onSelectElement={setSelectedElement} searchQuery={searchQuery} filterCategory={filterCategory} autoRotate={autoRotate} />
+          <PeriodicTable3D onSelectElement={handleSelectElement} searchQuery={searchQuery} filterCategory={filterCategory} autoRotate={autoRotate} />
         ) : (
-          <PeriodicTable2D onSelectElement={setSelectedElement} searchQuery={searchQuery} filterCategory={filterCategory} />
+          <PeriodicTable2D onSelectElement={handleSelectElement} searchQuery={searchQuery} filterCategory={filterCategory} />
         )}
         <div className="mt-4 flex flex-wrap gap-2">
           {categories.filter((c) => c.key).map((cat) => (

@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 import { MeaningPanel, CollapsibleControls, LabCard, ResultBadge } from "./ui";
 
@@ -26,6 +26,16 @@ function ProjectileLab() {
   const T = (2 * velocity * Math.sin(theta)) / g;
   const H = (velocity * velocity * Math.sin(theta) * Math.sin(theta)) / (2 * g);
   const R = (velocity * velocity * Math.sin(2 * theta)) / g;
+
+  const handleLaunch = useCallback(() => {
+    setLaunched(false);
+    setTimeout(() => {
+      trailPtsRef.current = [];
+      ballRef.current?.position.set(0, 0.35, 0);
+      elapsedRef.current = 0;
+      setLaunched(true);
+    }, 50);
+  }, []);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -61,7 +71,9 @@ function ProjectileLab() {
       scene.add(cannon);
 
       const ball = new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xd97706, emissiveIntensity: 0.4 }));
-      ballRef.current?.position.set(0, 0.35, 0); scene.add(ball);
+      ballRef.current = ball;
+      ball.position.set(0, 0.35, 0);
+      scene.add(ball);
 
       const peak = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), new THREE.MeshStandardMaterial({ color: 0xfbbf24, emissive: 0xf59e0b, emissiveIntensity: 0.6 }));
       peak.position.set((R / 2) * scale, H * scale, 0); peak.visible = false; scene.add(peak);
@@ -133,17 +145,7 @@ function ProjectileLab() {
     })();
 
     return () => { cancelled = true; cleanup?.(); };
-  }, []);
-
-  const handleLaunch = () => {
-    setLaunched(false);
-    setTimeout(() => {
-      trailPtsRef.current = [];
-      ballRef.current?.position.set(0, 0.35, 0);
-      elapsedRef.current = 0;
-      setLaunched(true);
-    }, 50);
-  };
+  }, [launched, showPath, showVectors, angle, velocity]);
 
   return (
     <LabCard title="Projectile Motion 3D" subtitle="Parabolic trajectory under gravity">
@@ -277,7 +279,7 @@ function CircularMotionLab() {
     })();
 
     return () => { cancelled = true; cleanup?.(); };
-  }, []);
+  }, [radius, omega]);
 
   return (
     <LabCard title="Uniform Circular Motion 3D" subtitle="Constant speed on a circular path">
@@ -421,7 +423,7 @@ function SHMLab() {
     })();
 
     return () => { cancelled = true; cleanup?.(); };
-  }, []);
+  }, [amplitude, frequency]);
 
   return (
     <LabCard title="Simple Harmonic Motion 3D" subtitle="Oscillating mass on a spring">
