@@ -2,10 +2,25 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { ExamGroupNode, SubjectNode, ChapterNode, SubChapterNode, TopicNode, ContentItemSummary } from "@/lib/types";
+import type {
+  ExamGroupNode,
+  SubjectNode,
+  ChapterNode,
+  SubChapterNode,
+  TopicNode,
+  ContentItemSummary,
+  AccessLevel,
+} from "@/lib/types";
 
 interface SimpleHierarchyProps {
   path?: string[];
+  accessibleItems?: Array<{
+    id: string;
+    title: string;
+    access_level: AccessLevel;
+    public_teaser: string;
+    topic_id: string;
+  }>;
 }
 
 type Node = ExamGroupNode | SubjectNode | ChapterNode | SubChapterNode | TopicNode;
@@ -14,7 +29,10 @@ interface FlatItem extends ContentItemSummary {
   fullPath: string[];
 }
 
-export default function SimpleHierarchy({ path = [] }: SimpleHierarchyProps) {
+export default function SimpleHierarchy({
+  path = [],
+  accessibleItems,
+}: SimpleHierarchyProps) {
   const [tree, setTree] = useState<ExamGroupNode[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +50,9 @@ export default function SimpleHierarchy({ path = [] }: SimpleHierarchyProps) {
       }
     }
     void load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (loading) {
@@ -65,13 +85,15 @@ export default function SimpleHierarchy({ path = [] }: SimpleHierarchyProps) {
     );
   }
 
-  const items = flattenContent(node, path);
+  const items = flattenContent(node, path, accessibleItems);
 
   return (
     <div className="simple-hierarchy">
       <Breadcrumb path={path} />
       <h1 className="simple-hierarchy-title">{node.name}</h1>
-      {node.description && <p className="simple-hierarchy-desc">{node.description}</p>}
+      {node.description && (
+        <p className="simple-hierarchy-desc">{node.description}</p>
+      )}
 
       {items.length === 0 && (
         <div className="under-development">
@@ -86,13 +108,22 @@ export default function SimpleHierarchy({ path = [] }: SimpleHierarchyProps) {
             <h3 className="note-card-title">{item.title}</h3>
             <div
               className="note-card-teaser"
-              dangerouslySetInnerHTML={{ __html: item.public_teaser ?? "" }}
+              dangerouslySetInnerHTML={{
+                __html: item.public_teaser ?? "",
+              }}
             />
             <div className="note-card-meta">
-              <span className={`badge ${item.access_level < 4 ? "badge-locked" : "badge-open"}`}>
+              <span
+                className={`badge ${
+                  item.access_level < 4 ? "badge-locked" : "badge-open"
+                }`}
+              >
                 {item.access_level < 4 ? `Tier ${item.access_level}+` : "Open"}
               </span>
-              <Link href={`/learn/${item.fullPath.join("/")}`} className="btn btn-primary btn-sm">
+              <Link
+                href={`/learn/${item.fullPath.join("/")}`}
+                className="btn btn-primary btn-sm"
+              >
                 Read notes
               </Link>
             </div>
@@ -103,7 +134,10 @@ export default function SimpleHierarchy({ path = [] }: SimpleHierarchyProps) {
   );
 }
 
-function resolveNode(tree: ExamGroupNode[], path: string[]): Node | null {
+function resolveNode(
+  tree: ExamGroupNode[],
+  path: string[]
+): Node | null {
   let current: Node[] = tree;
   let node: Node | null = null;
 
@@ -113,7 +147,8 @@ function resolveNode(tree: ExamGroupNode[], path: string[]): Node | null {
     node = found;
     if ("subjects" in found) current = found.subjects ?? [];
     else if ("chapters" in found) current = found.chapters ?? [];
-    else if ("sub_chapters" in found) current = found.sub_chapters ?? [];
+    else if ("sub_chapters" in found)
+      current = found.sub_chapters ?? [];
     else if ("topics" in found) current = found.topics ?? [];
     else current = [];
   }
@@ -121,9 +156,36 @@ function resolveNode(tree: ExamGroupNode[], path: string[]): Node | null {
   return node;
 }
 
-function flattenContent(node: Node, basePath: string[]): FlatItem[] {
+function flattenContent(
+  node: Node,
+  basePath: string[],
+  accessibleItems?: Array<{
+    id: string;
+    title: string;
+    access_level: AccessLevel;
+    public_teaser: string;
+    topic_id: string;
+  }>
+): FlatItem[] {
   const items: FlatItem[] = [];
 
+  // If accessibleItems is provided (server-side filtered), use those
+  if (accessibleItems && accessibleItems.length > 0) {
+    for (const ci of accessibleItems) {
+      items.push({
+        id: ci.id,
+        topic_id: ci.topic_id,
+        title: ci.title,
+        access_level: ci.access_level,
+        owner_contact: null,
+        public_teaser: ci.public_teaser,
+        fullPath: [...basePath, ci.id],
+      });
+    }
+    return items;
+  }
+
+  // Fallback: use tree-based flattening
   if ("content_items" in node && node.content_items) {
     for (const ci of node.content_items) {
       items.push({ ...ci, fullPath: [...basePath, ci.id] });
@@ -172,7 +234,13 @@ function flattenContent(node: Node, basePath: string[]): FlatItem[] {
       for (const chapter of subject.chapters ?? []) {
         for (const sub of chapter.sub_chapters ?? []) {
           for (const topic of sub.topics ?? []) {
-            const topicPath = [...basePath, subject.slug, chapter.slug, sub.slug, topic.slug];
+            const topicPath = [
+              ...basePath,
+              subject.slug,
+              chapter.slug,
+              sub.slug,
+              topic.slug,
+            ];
             for (const ci of topic.content_items ?? []) {
               items.push({ ...ci, fullPath: [...topicPath, ci.id] });
             }
@@ -191,7 +259,12 @@ function Breadcrumb({ path }: { path: string[] }) {
   let accumulated = "";
   for (const segment of path) {
     accumulated += "/" + segment;
-    crumbs.push({ label: segment.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()), href: "/learn" + accumulated });
+    crumbs.push({
+      label: segment
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase()),
+      href: "/learn" + accumulated,
+    });
   }
 
   return (
@@ -202,9 +275,19 @@ function Breadcrumb({ path }: { path: string[] }) {
           return (
             <li key={crumb.href + index}>
               {isLast ? (
-                <span aria-current="page" className="breadcrumb-current">{crumb.label}</span>
+                <span
+                  aria-current="page"
+                  className="breadcrumb-current"
+                >
+                  {crumb.label}
+                </span>
               ) : (
-                <Link href={crumb.href} className="breadcrumb-link">{crumb.label}</Link>
+                <Link
+                  href={crumb.href}
+                  className="breadcrumb-link"
+                >
+                  {crumb.label}
+                </Link>
               )}
             </li>
           );

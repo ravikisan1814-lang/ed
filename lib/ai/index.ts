@@ -1,4 +1,9 @@
-import type { AIGenerateRequest, AIGenerateResponse, AIProvider, AIProviderName } from "./types";
+import type {
+  AIGenerateRequest,
+  AIGenerateResponse,
+  AIProvider,
+  AIProviderName,
+} from "./types";
 import { AIProviderError } from "./errors";
 import { geminiProvider } from "./providers/gemini";
 import { groqProvider } from "./providers/groq";
@@ -35,7 +40,9 @@ function resolveProvider(request: AIGenerateRequest): AIProvider {
 }
 
 /** Entry point for the AI abstraction. All providers hang off this. */
-export async function generateAI(request: AIGenerateRequest): Promise<AIGenerateResponse> {
+export async function generateAI(
+  request: AIGenerateRequest
+): Promise<AIGenerateResponse> {
   const provider = resolveProvider(request);
   return provider.generate(request);
 }
@@ -65,7 +72,9 @@ export async function generateAIWithFailover(
     try {
       return await provider.generate({ ...request, provider: name });
     } catch (err) {
-      errors.push(`${name}: ${err instanceof Error ? err.message : String(err)}`);
+      errors.push(
+        `${name}: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
   }
 
