@@ -32,6 +32,18 @@ Last updated: 2026-08-29 (NEB Grade 11 syllabus seeded: Physics, Chemistry, Biol
 - `npm run verify:migration` — cross-exam-group count check
 
 ### History
+- (2026-08-29) INTERACTIVE SCIENCE LAB. Created `components/lab/` with 4 components:
+  - **MathLab**: Function Grapher (Canvas 2D), 3D Parabola, Coordinate Geometry (3 modes), 3D Surfaces (6 types)
+  - **ChemistryLab**: 3D Periodic Table (118 elements, hover/click, search, filter, auto-rotate), 2D grid view, 3D Molecular Models (H2O, CO2, CH4)
+  - **PhysicsLab**: Projectile Motion 3D (launch animation, velocity vectors, path trail), Uniform Circular Motion 3D (tangential velocity + centripetal acceleration arrows), Simple Harmonic Motion 3D (spring visualization + real-time displacement-time canvas graph)
+  - **BiologyLab**: DNA Double Helix 3D (base pairs A-T/G-C color-coded, sugar-phosphate backbone), 3D Cell Visualization (Animal/Plant toggle with organelles)
+  - Shared UI: `MeaningPanel`, `CollapsibleControls`, `LabCard`, `ResultBadge`
+  - Responsive: `clamp(300px, 50vh, 600px)` heights, `ResizeObserver` for 3D containers, `w-full` on all containers, mobile-first layout
+  - All Three.js scenes use dynamic import + proper cleanup (ResizeObserver disconnect, renderer.dispose, controls.dispose, DOM cleanup)
+  - `tsc` ✓, `lint` ✓ (5 warnings only), vitest 29/29 ✓
+- (2026-08-29) BACK BUTTON + UNDER-DEVELOPMENT STATE + SYLLABUS. See above entries.
+
+### History
 - (2026-08-29) BACK BUTTON + UNDER-DEVELOPMENT STATE. Removed text label from BackButton (arrow-in-box only), changed from fixed floating button to inline below-header placement. Added `.under-development` CSS class (dashed border, placeholder styling). Replaced all empty/placeholder states across 8+ pages with "Under development — will be added in future update". Also fixed `.gitignore` (aider files) and added Instagram link to footer. tsc + lint clean.
 - (2026-08-29) NEB SYLLABUS SEED. Created `scripts/migrate-syllabus.mjs` and seeded all three NEB Grade 11 science subjects (Physics 26 units, Chemistry 17 units, Biology 10 units) into the live Supabase DB. Each unit becomes a chapter with a placeholder topic and content item. Re-run safe via idempotent upserts.
 - (2026-08-16) APP SIDE OF THE AUTH/APPROVAL BUILD. DB side was already done (migrations 0012 approval flow + tier spread 10/25/50/100, 0013 public-open fix). Added auth API routes (signin/signup/signout), owner-only admin users API, `/login`, `/admin` (member management: approve/hold/reject + tier select), `/info` (rules & notices with tier percentages and official notices), rebuilt `SiteHeader` with real sessions (sign-in pill, profile dropdown with tier label, owner-only admin link, working sign out, `/info` nav link), owner-email line in `LockedSection`, and the missing `.btn`/`.btn-primary`/`.btn-secondary` base styles. tsc + lint clean, Vitest 23/23.
