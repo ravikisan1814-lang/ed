@@ -112,7 +112,7 @@ export default function TopicContentView({ content, userAccessLevel, topicTitle,
                         <h3>{variant.label}</h3>
                         <pre
                           className="journal-textarea"
-                          style={{ whiteSpace: "pre-wrap", readOnly: true }}
+                          style={{ whiteSpace: "pre-wrap" }}
                           aria-label={variant.label}
                           dangerouslySetInnerHTML={{ __html: variant.content }}
                         />
