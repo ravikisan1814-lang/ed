@@ -120,6 +120,9 @@ export default function SiteHeader() {
         <Link href="/technical-terms" className="nav-link" onClick={() => setMenuOpen(false)}>
           Technical Terms
         </Link>
+        <Link href="/lab" className="nav-link" onClick={() => setMenuOpen(false)}>
+          Lab
+        </Link>
         {isOwner && (
           <Link href="/admin" className="nav-link nav-link-admin" onClick={() => setMenuOpen(false)}>
             Admin

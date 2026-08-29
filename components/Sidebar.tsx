@@ -101,6 +101,9 @@ export default function Sidebar() {
           <Link href="/technical-terms" className="sidebar-link" onClick={close}>
             Technical Terms
           </Link>
+          <Link href="/lab" className="sidebar-link" onClick={close}>
+            Lab
+          </Link>
 
           {loading ? null : (
             <>
