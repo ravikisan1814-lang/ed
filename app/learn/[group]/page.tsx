@@ -1,4 +1,5 @@
 import SimpleHierarchy from "@/components/learn/SimpleHierarchy";
+import AnnotatedModelViewer from "@/components/visuals/AnnotatedModelViewer";
 
 export const metadata = {
   title: "Learn — Notes | Ravikisan's Platform",
@@ -21,6 +22,12 @@ export default async function LearnGroupPage({
       </section>
       <section className="content-section">
         <SimpleHierarchy path={[group]} />
+      </section>
+      <section className="content-section">
+        <h2>Interactive 3D Model</h2>
+        <div style={{ height: 600 }}>
+          <AnnotatedModelViewer />
+        </div>
       </section>
     </>
   );
