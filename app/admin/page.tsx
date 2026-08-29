@@ -38,7 +38,7 @@ export default async function AdminPage() {
 
   return (
     <div className="admin-page">
-      <BackButton href="/" label="Back to Home" />
+      <BackButton href="/" />
       <AdminPanel />
     </div>
   );

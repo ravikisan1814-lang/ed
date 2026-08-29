@@ -9,7 +9,7 @@ export const metadata = {
 export default function LearnPage() {
   return (
     <>
-      <BackButton href="/" label="Back to Home" />
+      <BackButton href="/" />
       <section className="hero hero-premium">
         <span className="hero-badge">Notes</span>
         <h1>Select a subject</h1>

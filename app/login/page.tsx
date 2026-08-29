@@ -77,7 +77,7 @@ export default function LoginPage() {
 
   return (
     <div className="auth-page">
-      <BackButton href="/" label="Back to Home" />
+      <BackButton href="/" />
       <div className="auth-hero">
         <h1>Platform access</h1>
         <p>

@@ -92,7 +92,10 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
         <section className="content-section">
           <h2>Sub-chapters &amp; Topics</h2>
           {allSubChapters.length === 0 ? (
-            <p className="explorer-empty">No sub-chapters yet.</p>
+            <div className="under-development">
+              <span className="ud-icon">🔮</span>
+              <span>Under development — will be added in future update</span>
+            </div>
           ) : (
             <div className="subchapter-list">
               {allSubChapters.map((sub) => (

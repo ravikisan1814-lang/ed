@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 
 const OWNER_EMAIL = "ravikisan1814@gmail.com";
+const INSTAGRAM_URL = "https://www.instagram.com/ravikishan";
 
 const MOOD_LINES = [
   "Take a breath — learning is a marathon, not a sprint.",
@@ -92,6 +93,9 @@ export default function SiteFooter() {
         <nav className="footer-nav" aria-label="Footer">
           <Link href="/">Home</Link>
           <Link href={`mailto:${OWNER_EMAIL}`}>Contact</Link>
+          <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="footer-instagram">
+            Instagram
+          </a>
         </nav>
       </div>
     </footer>

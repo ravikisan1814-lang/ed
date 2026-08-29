@@ -46,13 +46,23 @@ export default function SimpleHierarchy({ path = [] }: SimpleHierarchyProps) {
   }
 
   if (tree.length === 0) {
-    return <p className="explorer-empty">No content available yet.</p>;
+    return (
+      <div className="under-development">
+        <span className="ud-icon">🔮</span>
+        <span>Under development — will be added in future update</span>
+      </div>
+    );
   }
 
   const node = resolveNode(tree, path);
 
   if (!node) {
-    return <p className="explorer-empty">Not found.</p>;
+    return (
+      <div className="under-development">
+        <span className="ud-icon">🔮</span>
+        <span>Under development — will be added in future update</span>
+      </div>
+    );
   }
 
   const items = flattenContent(node, path);
@@ -64,7 +74,10 @@ export default function SimpleHierarchy({ path = [] }: SimpleHierarchyProps) {
       {node.description && <p className="simple-hierarchy-desc">{node.description}</p>}
 
       {items.length === 0 && (
-        <p className="explorer-empty">No notes published in this section yet.</p>
+        <div className="under-development">
+          <span className="ud-icon">🔮</span>
+          <span>Under development — will be added in future update</span>
+        </div>
       )}
 
       <div className="notes-list">

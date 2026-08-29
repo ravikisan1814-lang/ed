@@ -239,7 +239,10 @@ export default function ContentItemViewer({
           {detail.locked_payload ? (
             <div className="locked-payload" dangerouslySetInnerHTML={{ __html: detail.locked_payload }} />
           ) : (
-            <p className="explorer-empty">Numerical examples will be added soon.</p>
+            <div className="under-development">
+              <span className="ud-icon">🔮</span>
+              <span>Under development — will be added in future update</span>
+            </div>
           )}
         </div>
       );
@@ -267,7 +270,10 @@ export default function ContentItemViewer({
               ))}
             </div>
           ) : (
-            <p className="explorer-empty">Formulas will be extracted soon.</p>
+            <div className="under-development">
+              <span className="ud-icon">🔮</span>
+              <span>Under development — will be added in future update</span>
+            </div>
           )}
         </div>
       );

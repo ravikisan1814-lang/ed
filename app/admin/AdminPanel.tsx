@@ -145,7 +145,10 @@ export default function AdminPanel() {
         {users === null ? (
           <p className="admin-loading">Loading members…</p>
         ) : users.length === 0 ? (
-          <p className="admin-empty">No members yet in the live database.</p>
+          <div className="under-development">
+            <span className="ud-icon">🔮</span>
+            <span>Under development — will be added in future update</span>
+          </div>
         ) : (
           <div className="admin-table-wrap">
             <table className="admin-table" data-testid="admin-users-table">

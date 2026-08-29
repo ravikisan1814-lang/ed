@@ -60,7 +60,7 @@ export default async function ProfilePage() {
     <LayoutShell>
       <main className="page-main">
         <div className="profile-page">
-          <BackButton href="/" label="Back to Home" />
+          <BackButton href="/" />
           <div className="profile-header">
             <div className="profile-avatar">{(profile.email?.[0] ?? "?").toUpperCase()}</div>
             <div className="profile-info">

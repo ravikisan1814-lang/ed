@@ -96,7 +96,10 @@ export default function Sidebar() {
             Rules &amp; Notices
           </Link>
           <Link href="/graphs" className="sidebar-link" onClick={close}>
-            Graphs
+            Graph
+          </Link>
+          <Link href="/technical-terms" className="sidebar-link" onClick={close}>
+            Technical Terms
           </Link>
 
           {loading ? null : (

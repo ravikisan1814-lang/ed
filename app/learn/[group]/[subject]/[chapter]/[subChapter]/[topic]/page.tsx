@@ -83,7 +83,10 @@ export default async function TopicPage({ params }: TopicPageProps) {
         <section className="content-section">
           <h2>Notes &amp; Study Material</h2>
           {items.length === 0 ? (
-            <p className="explorer-empty">No notes published for this topic yet.</p>
+            <div className="under-development">
+              <span className="ud-icon">🔮</span>
+              <span>Under development — will be added in future update</span>
+            </div>
           ) : (
             <div className="item-list">
               {items.map((item) => (

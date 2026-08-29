@@ -7,7 +7,7 @@ const OWNER_EMAIL = "ravikisan1814@gmail.com";
 export default function InfoPage() {
   return (
     <div className="info-page">
-      <BackButton href="/" label="Back to Home" />
+      <BackButton href="/" />
       <section className="info-hero">
         <h1>Official Rules & Notices</h1>
         <p>Important guidelines for using Ravikisan&apos;s Platform.</p>
@@ -15,12 +15,18 @@ export default function InfoPage() {
 
       <section className="info-section">
         <h2>Website rules</h2>
-        <div className="coming-soon">Coming 🔜</div>
+        <div className="under-development">
+          <span className="ud-icon">🔮</span>
+          <span>Under development — will be added in future update</span>
+        </div>
       </section>
 
       <section className="info-section">
         <h2>Official notices</h2>
-        <div className="coming-soon">Coming 🔜</div>
+        <div className="under-development">
+          <span className="ud-icon">🔮</span>
+          <span>Under development — will be added in future update</span>
+        </div>
       </section>
 
       <section className="info-section info-contact">

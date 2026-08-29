@@ -527,6 +527,16 @@ main {
   color: var(--fg);
 }
 
+.footer-instagram {
+  color: #e1306c;
+  font-weight: 600;
+}
+
+.footer-instagram:hover {
+  color: #c13584;
+  text-decoration: underline;
+}
+
 /* ------------------------------------------------------- premium home */
 
 .hero-premium {
@@ -2548,31 +2558,29 @@ main {
    Global back button
    ============================================================ */
 .back-button {
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 100;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--fg);
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: border-color 0.15s, color 0.15s, transform 0.15s;
-}
+   position: static;
+   width: 36px;
+   height: 36px;
+   border-radius: 8px;
+   border: 1px solid var(--border);
+   background: var(--card);
+   color: var(--fg);
+   font-size: 1rem;
+   cursor: pointer;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+   transition: border-color 0.15s, color 0.15s, transform 0.15s;
+   text-decoration: none;
+   margin-bottom: 1rem;
+ }
 
-.back-button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: translateY(-1px);
-}
+ .back-button:hover {
+   border-color: var(--accent);
+   color: var(--accent);
+   transform: translateY(-1px);
+ }
 
 /* ============================================================
    Content viewer — topic page
@@ -3527,27 +3535,28 @@ main {
 
 /* Back button */
 .back-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 1rem;
-  margin-bottom: 1rem;
-  color: var(--fg);
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  background: var(--card);
-  border: 1px solid var(--border);
-  transition: all 0.2s ease;
-}
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0;
+   margin-bottom: 1rem;
+   color: var(--fg);
+   text-decoration: none;
+   border-radius: 8px;
+   font-size: 0.9rem;
+   font-weight: 500;
+   background: var(--card);
+   border: 1px solid var(--border);
+   transition: all 0.2s ease;
+ }
 .back-button:hover {
-  background: var(--accent);
-  color: white;
-  border-color: var(--accent);
-}
+   background: var(--accent);
+   color: white;
+   border-color: var(--accent);
+ }
 .back-button svg {
-  flex-shrink: 0;
+   width: 16px;
+   height: 16px;
 }
 
 /* Auth page layout */
@@ -3576,4 +3585,26 @@ main {
 .admin-page {
   min-height: 100vh;
   padding-top: 1rem;
+}
+
+/* Under development / empty state placeholder */
+.under-development {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2.5rem 1.25rem;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.under-development .ud-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
 }

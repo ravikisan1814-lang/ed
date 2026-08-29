@@ -119,7 +119,7 @@ export default function TechnicalTermsPage() {
 
   return (
     <>
-      <BackButton href="/" label="Back to Home" />
+      <BackButton href="/" />
       {/* Particle background */}
       <div className="technical-terms-bg">
         <ParticleField count={60} color={theme === "dark" ? "#60a5fa" : "#3b82f6"} speed={0.3} />

@@ -56,7 +56,7 @@ export default function GraphsPage() {
 
   return (
     <>
-      <BackButton href="/" label="Back to Home" />
+      <BackButton href="/" />
       <section className="hero hero-premium">
         <span className="hero-badge">Graphs &amp; Figures</span>
         <h1>Subject-wise figures</h1>

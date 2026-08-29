@@ -52,7 +52,7 @@ export default async function CatalogPage() {
 
   return (
     <div className="catalog-page">
-      <BackButton href="/" label="Back to Home" />
+      <BackButton href="/" />
       <section className="catalog-hero">
         <h1>Content Catalog</h1>
         <p>
@@ -68,14 +68,10 @@ export default async function CatalogPage() {
 
       {examGroups.length === 0 ? (
         <section className="catalog-empty content-section">
-          <h2>No content available yet</h2>
-          <p className="catalog-empty-text">
-            The catalog is being populated. Check back soon or contact the owner
-            to learn more.
-          </p>
-          <Link href="/" className="btn btn-primary">
-            Return home
-          </Link>
+          <div className="under-development">
+            <span className="ud-icon">🔮</span>
+            <span>Under development — will be added in future update</span>
+          </div>
         </section>
       ) : (
         <>

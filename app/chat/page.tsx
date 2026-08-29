@@ -6,7 +6,7 @@ import ChatInterface from "@/components/ChatInterface";
 export default function ChatPage() {
   return (
     <div className="chat-page-wrapper">
-      <BackButton href="/" label="Back to Home" />
+      <BackButton href="/" />
       <section className="chat-page">
         <ChatInterface />
       </section>

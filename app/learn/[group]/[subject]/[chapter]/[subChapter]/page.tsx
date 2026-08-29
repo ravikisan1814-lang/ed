@@ -82,7 +82,10 @@ export default async function SubChapterPage({ params }: SubChapterPageProps) {
 
         <section className="content-section">
           {topics.length === 0 ? (
-            <p className="explorer-empty">No topics yet.</p>
+            <div className="under-development">
+              <span className="ud-icon">🔮</span>
+              <span>Under development — will be added in future update</span>
+            </div>
           ) : (
             <div className="topic-list">
               {topics.map((topic) => {
