@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase";
-import {TopicContentView} from "@/components/TopicContentView";
+import TopicContentView from "@/components/TopicContentView";
 import type { ContentItemDetail } from "@/lib/types";
 
 interface Params {
