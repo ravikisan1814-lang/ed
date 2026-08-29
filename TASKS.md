@@ -399,3 +399,54 @@ Deliverables:
 2. `node scripts/verify-class-11.mjs` — 6 subjects, 10 chapters, 134 topics/items.
 3. Home → Class 11 Notes → expand Chemistry/Physics — `/learn/class-11/...` paths resolve in hierarchy explorer.
 4. Re-run migration is idempotent (upserts on slug/title constraints).
+
+## NEB Grade 11 Syllabus seed — COMPLETE (opencode, 2026-08-29)
+
+Deliverables:
+- `scripts/migrate-syllabus.mjs` — seeds NEB Grade 11 Physics (26 units), Chemistry (17 units), Biology (10 units) into the `class-11` exam group. Each unit becomes a chapter with one sub-chapter and one topic; placeholder content item created (access_level=4, public teaser: "Content under development").
+- `scripts/verify-syllabus.mjs` — post-migration verification script.
+- `package.json` — added `migrate:syllabus` script.
+
+**Data landed:**
+| Subject | Chapters (units) |
+| --- | --- |
+| Physics | 26 |
+| Chemistry | 17 |
+| Biology | 10 |
+| **Total** | **53** |
+
+Each chapter has 1 sub-chapter + 1 topic + 1 content item (placeholder).
+
+**Verification steps:**
+1. `npm run migrate:syllabus` — seeds 3 subjects, 53 chapters, 53 topics, 53 content items.
+2. `node scripts/verify-syllabus.mjs` — confirms data in Supabase.
+3. `npx tsc --noEmit` + `npm run lint` — pass.
+4. `npm test` — 29/29.
+5. Visit `/learn/class-11/physics` — shows 26 unit cards. Same for chemistry and biology.
+
+**To re-run:** `npm run migrate:syllabus` (idempotent — safe to re-execute).
+
+## Back button redesign + under-development empty states — COMPLETE (opencode, 2026-08-29)
+
+Deliverables:
+- `components/BackButton.tsx` — removed `label` prop; renders only arrow SVG inside box, no text.
+- `app/globals.css` — back button changed from fixed floating circle to inline 36×36px box; removed `gap` since no text.
+- All 9 page usages updated: `label="Back to Home"` prop removed.
+- `.under-development` CSS class (dashed border, muted styling, 🔮 icon) added to `app/globals.css`.
+- Replaced all empty/placeholder states with "Under development — will be added in future update":
+  - `app/catalog/page.tsx` — catalog empty section
+  - `components/learn/SimpleHierarchy.tsx` — no content / not found / no notes
+  - `components/learn/ContentItemViewer.tsx` — no numerical examples / no formulas
+  - `app/learn/[group]/[subject]/[chapter]/page.tsx` — no sub-chapters
+  - `app/learn/[group]/[subject]/[chapter]/[subChapter]/page.tsx` — no topics
+  - `app/learn/[group]/[subject]/[chapter]/[subChapter]/[topic]/page.tsx` — no notes
+  - `app/admin/AdminPanel.tsx` — no members
+  - `app/info/page.tsx` — website rules / official notices
+- Left unchanged: journal "no entries yet" (user-generated), search "no matches" (legitimate query result).
+
+**Verification steps:**
+1. `npx tsc --noEmit` — passes.
+2. `npm run lint` — passes.
+3. `npm test` — 29/29.
+4. Visit any page — back button is arrow-only box below header (no text label).
+5. Visit `/catalog` with empty DB — shows "Under development" placeholder.
