@@ -1,15 +1,14 @@
-import { createClient } from "@/lib/supabase/server";
 import type { ExamGroupNode, ContentItemDetail } from "@/lib/types";
+import { createClient } from "@/lib/supabase/server";
 
 export class ContentService {
-  private supabase;
-
-  constructor() {
-    this.supabase = createClient();
+  private async getClient() {
+    return await createClient();
   }
 
   async getHierarchy(): Promise<ExamGroupNode[]> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getClient();
+    const { data, error } = await supabase
       .from("exam_groups")
       .select(
         `id, slug, name, description, sort_order,
@@ -37,7 +36,8 @@ export class ContentService {
     id: string,
     userId?: string
   ): Promise<ContentItemDetail | null> {
-    const { data, error } = await this.supabase.rpc("get_content_item", {
+    const supabase = await this.getClient();
+    const { data, error } = await supabase.rpc("get_content_item", {
       p_item_id: id,
       p_user_id: userId ?? null,
     });
@@ -47,7 +47,8 @@ export class ContentService {
   }
 
   async getUserProfile(userId: string) {
-    const { data, error } = await this.supabase
+    const supabase = await this.getClient();
+    const { data, error } = await supabase
       .from("profiles")
       .select("access_level, status")
       .eq("id", userId)

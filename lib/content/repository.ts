@@ -2,14 +2,13 @@ import { createClient } from "@/lib/supabase/server";
 import type { ContentItem, ContentVariant } from "@/lib/types";
 
 export class ContentRepository {
-  private supabase;
-
-  constructor() {
-    this.supabase = createClient();
+  private async getClient() {
+    return await createClient();
   }
 
   async findById(id: string): Promise<ContentItem | null> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getClient();
+    const { data, error } = await supabase
       .from("content_items")
       .select("*")
       .eq("id", id)
@@ -20,7 +19,8 @@ export class ContentRepository {
   }
 
   async findByTopic(topicId: string): Promise<ContentItem[]> {
-    const { data, error } = await this.supabase
+    const supabase = await this.getClient();
+    const { data, error } = await supabase
       .from("content_items")
       .select("*")
       .eq("topic_id", topicId)
@@ -31,7 +31,8 @@ export class ContentRepository {
   }
 
   async create(data: Partial<ContentItem>): Promise<ContentItem> {
-    const { data: created, error } = await this.supabase
+    const supabase = await this.getClient();
+    const { data: created, error } = await supabase
       .from("content_items")
       .insert(data)
       .select()
@@ -45,7 +46,8 @@ export class ContentRepository {
     id: string,
     data: Partial<ContentItem>
   ): Promise<ContentItem> {
-    const { data: updated, error } = await this.supabase
+    const supabase = await this.getClient();
+    const { data: updated, error } = await supabase
       .from("content_items")
       .update(data)
       .eq("id", id)
@@ -57,7 +59,8 @@ export class ContentRepository {
   }
 
   async delete(id: string): Promise<void> {
-    const { error } = await this.supabase
+    const supabase = await this.getClient();
+    const { error } = await supabase
       .from("content_items")
       .delete()
       .eq("id", id);
