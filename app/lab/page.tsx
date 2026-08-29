@@ -1,58 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import BackButton from "@/components/BackButton";
-import { GraphControls } from "@/components/visuals/GraphControls";
-import type { SceneParams } from "@/components/visuals/ThreeScene";
+import MathLab from "@/components/lab/math-lab";
+import ChemistryLab from "@/components/lab/chemistry-lab";
+import PhysicsLab from "@/components/lab/physics-lab";
+import BiologyLab from "@/components/lab/biology-lab";
 
-const ThreeScene = dynamic(() => import("@/components/visuals/ThreeScene"), {
-  ssr: false,
-});
-
-const SUBJECTS = [
-  {
-    slug: "physics",
-    label: "Physics",
-    figures: [
-      { key: "trajectory", label: "Projectile motion trajectory" },
-      { key: "trajectory", label: "Circular motion / centripetal acceleration" },
-      { key: "vectorfield", label: "Electric / magnetic field lines" },
-      { key: "wave", label: "Wave superposition / interference" },
-      { key: "shm", label: "Simple harmonic motion" },
-    ],
-  },
-  {
-    slug: "chemistry",
-    label: "Chemistry",
-    figures: [
-      { key: "molecular", label: "VSEPR molecular geometry" },
-      { key: "molecular", label: "Crystal lattice structure" },
-      { key: "molecular", label: "Atomic orbitals (s, p, d)" },
-      { key: "barchart", label: "Periodic trends / comparisons" },
-      { key: "bonding", label: "Chemical bonding model" },
-    ],
-  },
-  {
-    slug: "mathematics",
-    label: "Mathematics",
-    figures: [
-      { key: "trajectory", label: "3D parabola / conic surface" },
-      { key: "trajectory", label: "Hyperboloid / saddle surface" },
-      { key: "barchart", label: "Vector addition in 3D" },
-      { key: "wave", label: "Spiral / helix curve" },
-      { key: "coordinate", label: "Coordinate axes and octants" },
-    ],
-  },
-];
+const TABS = [
+  { key: "math", label: "Mathematics" },
+  { key: "chemistry", label: "Chemistry" },
+  { key: "physics", label: "Physics" },
+  { key: "biology", label: "Biology" },
+] as const;
 
 export default function LabPage() {
-  const [figureParams, setFigureParams] = useState<Record<string, SceneParams>>({});
-
-  const updateParams = (subjectSlug: string, figureIndex: number, next: SceneParams) => {
-    const key = `${subjectSlug}-${figureIndex}`;
-    setFigureParams((prev) => ({ ...prev, [key]: next }));
-  };
+  const [activeTab, setActiveTab] = useState<string>("physics");
 
   return (
     <>
@@ -60,39 +23,34 @@ export default function LabPage() {
       <section className="hero hero-premium">
         <span className="hero-badge">Lab</span>
         <h1>Virtual Laboratory</h1>
-        <p>Interactive simulations and experiments for Physics, Chemistry, and Mathematics.</p>
+        <p>Interactive 3D simulations across all science disciplines.</p>
       </section>
 
-      <section className="content-section">
-        <h2>Lab-Theory</h2>
-        <div className="notes-list">
-          {SUBJECTS.map((subject) => (
-            <article key={subject.slug} className="note-card">
-              <h3 className="note-card-title">{subject.label}</h3>
-              <div className="note-card-teaser">
-                {subject.figures.map((fig, index) => {
-                  const key = `${subject.slug}-${index}`;
-                  const params = figureParams[key] ?? {};
-                  return (
-                    <div key={`${fig.key}-${index}`} className="graph-row">
-                      <span className="graph-label">{fig.label}</span>
-                      <GraphControls figureKey={fig.key} label={fig.label} params={params} onChange={(next) => updateParams(subject.slug, index, next)} />
-                      <ThreeScene figureType={fig.key} topicTitle={`${subject.label} — ${fig.label}`} params={params} />
-                    </div>
-                  );
-                })}
-              </div>
-            </article>
+      {/* Tab navigation */}
+      <nav className="px-4 pt-4" aria-label="Lab sections">
+        <div className="flex flex-wrap gap-2 border-b border-border">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition-all ${
+                activeTab === tab.key
+                  ? "border-accent text-accent"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+              }`}
+            >
+              {tab.label}
+            </button>
           ))}
         </div>
-      </section>
+      </nav>
 
-      <section className="content-section">
-        <h2>Lab-Practice</h2>
-        <div className="under-development">
-          <span className="ud-icon">🔮</span>
-          <span>Under development — will be added in future update</span>
-        </div>
+      <section className="content-section max-w-6xl mx-auto px-4 pb-8">
+        {activeTab === "math" && <MathLab />}
+        {activeTab === "chemistry" && <ChemistryLab />}
+        {activeTab === "physics" && <PhysicsLab />}
+        {activeTab === "biology" && <BiologyLab />}
       </section>
     </>
   );

@@ -3608,3 +3608,147 @@ main {
   font-size: 1.4rem;
   flex-shrink: 0;
 }
+
+/* Lab page */
+.lab-tab-nav {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+.lab-tab-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.lab-tab-btn:hover {
+  color: var(--fg);
+  border-color: var(--border);
+}
+.lab-tab-btn.active {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.lab-3d-container {
+  height: clamp(300px, 50vh, 600px);
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: var(--card);
+}
+.lab-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.5rem;
+}
+.lab-result-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--fg) 5%, var(--card));
+  min-width: 80px;
+}
+.lab-result-badge .label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+.lab-result-badge .value {
+  font-size: 0.875rem;
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--fg);
+}
+.lab-meaning-panel {
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--accent) 5%, var(--card));
+  padding: 1rem;
+  width: 100%;
+}
+.lab-meaning-panel .title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+.lab-meaning-panel .meaning {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+.lab-meaning-panel .points {
+  margin-top: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.lab-meaning-panel .points li {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.125rem 0;
+}
+.lab-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 0.25rem 0;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.lab-collapsible-header:hover {
+  color: var(--fg);
+}
+.lab-collapsible-arrow {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.lab-collapsible-arrow.open {
+  transform: rotate(90deg);
+}
+.lab-card {
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 1rem;
+  width: 100%;
+}
+.lab-card-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.lab-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.lab-card-subtitle {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
