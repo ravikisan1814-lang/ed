@@ -1,8 +1,28 @@
 # AGENT STATUS
 
-Last updated: 2026-08-16 (Content migration - subject-based variant added)
+Last updated: 2026-08-29 (Back button redesign + under-development empty states)
 
-### Status: ALL JSON CONTENT WIRING COMPLETE (400+ content items)
+### Status: UI polish complete; awaiting syllabus content
+
+### Tasks (this session)
+| Task | Status |
+| --- | --- |
+| BackButton: arrow-in-box only, no text label | Done |
+| CSS: back button removed from fixed position, clean box styling | Done |
+| All page usages updated (label prop removed) | Done |
+| `.under-development` CSS class added (dashed border, muted) | Done |
+| All empty/placeholder states replaced with "Under development — will be added in future update" | Done |
+| `npm run lint` + `npx tsc --noEmit` green | Done |
+| Git commit + push | Done |
+| **Syllabus import from PDFs** | **BLOCKED** — AI cannot read PDFs |
+
+### To unblock syllabus import
+Copy-paste or export each PDF as plain text:
+1. `C:\Users\ASUS\Downloads\Physics XI Syllabus.pdf`
+2. `C:\Users\ASUS\Downloads\Chemistry  XI syllabus.pdf`
+3. `C:\Users\ASUS\Downloads\Biology XI syllabus updated.pdf`
+
+For each, provide: subject name → list of chapters/units (with names). I'll seed them into Supabase `exam_groups/subjects/chapters` and wire into `/learn`.
 
 ### Tasks (this session)
 | Task | Status |
