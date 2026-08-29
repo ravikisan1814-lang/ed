@@ -70,22 +70,12 @@ export default function TopicContentView({ content, userAccessLevel, topicTitle,
         ) : (
           <>
             {content.locked_payload && (
-              <div className="locked-payload" role="region" aria-label="Full content">
-                {content.locked_payload.statements?.map((stmt, i) => (
-                  <p key={i}>{stmt}</p>
-                ))}
-                {content.locked_payload.bullet_points?.map((point, i) => (
-                  <ul key={i}>
-                    <li>{point}</li>
-                  </ul>
-                ))}
-                {content.locked_payload.examples?.map((ex, i) => (
-                  <p key={i}><strong>Example {i + 1}:</strong> {ex}</p>
-                ))}
-                {content.locked_payload.past_year_questions?.map((q, i) => (
-                  <p key={i}><strong>PYQ {i + 1}:</strong> {q}</p>
-                ))}
-              </div>
+              <div
+                className="locked-payload"
+                role="region"
+                aria-label="Full content"
+                dangerouslySetInnerHTML={{ __html: content.locked_payload }}
+              />
             )}
 
             {content.variants && content.variants.length > 0 && (
@@ -120,9 +110,12 @@ export default function TopicContentView({ content, userAccessLevel, topicTitle,
                     >
                       <div className="tab-content">
                         <h3>{variant.label}</h3>
-                        <pre className="journal-textarea" style={{ whiteSpace: "pre-wrap", readOnly: true }} aria-label={variant.label}>
-                          {variant.note}
-                        </pre>
+                        <pre
+                          className="journal-textarea"
+                          style={{ whiteSpace: "pre-wrap", readOnly: true }}
+                          aria-label={variant.label}
+                          dangerouslySetInnerHTML={{ __html: variant.content }}
+                        />
                       </div>
                     </div>
                   ))}
