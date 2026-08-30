@@ -45,7 +45,7 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 const OWNER_CONTACT = "ravikisan1814@gmail.com";
 
 // ── Rich content data per subject/chapter/topic ──────────────────────────────
-import SYLLABUS_NOTES from "./syllabus-notes-data.json" assert { type: "json" };
+const SYLLABUS_NOTES = JSON.parse(readFileSync(join(__dirname, "syllabus-notes-data.json"), "utf8"));
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
