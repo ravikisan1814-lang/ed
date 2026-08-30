@@ -9,7 +9,7 @@ interface ChatMessage {
   content: string;
 }
 
-const VISITOR_LIMIT = 2;
+const VISITOR_LIMIT = Infinity;
 
 function cleanAiText(text: string): string {
   const links: string[] = [];
@@ -72,8 +72,6 @@ export default function AiChatWidget() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [visitorCount, setVisitorCount] = useState(0);
-  const [limitReached, setLimitReached] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -82,29 +80,12 @@ export default function AiChatWidget() {
 
   useEffect(() => {
     if (!open) return;
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setLimitReached(false);
-      }
-    });
   }, [open]);
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
     const text = input.trim();
     if (!text || loading) return;
-
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      const nextCount = visitorCount + 1;
-      setVisitorCount(nextCount);
-      if (nextCount >= VISITOR_LIMIT) {
-        setLimitReached(true);
-      }
-    }
 
     const nextMessages: ChatMessage[] = [...messages, { role: "user", content: text }];
     setMessages(nextMessages);
@@ -133,7 +114,7 @@ export default function AiChatWidget() {
     }
   }
 
-  const disabled = loading || !input.trim() || (!limitReached && visitorCount >= VISITOR_LIMIT);
+  const disabled = loading || !input.trim();
 
   return (
     <div className={`ai-chat-widget${open ? " ai-chat-widget--open" : ""}`}>
@@ -159,14 +140,6 @@ export default function AiChatWidget() {
                 {renderContent(msg.content)}
               </div>
             ))}
-            {limitReached && (
-              <div className="ai-chat-bubble ai-chat-bubble--assistant">
-                <p>You have reached the free trial limit of {VISITOR_LIMIT} messages.</p>
-                <p>
-                  <Link href="/login" className="ai-chat-link">Sign in</Link> to continue using the assistant.
-                </p>
-              </div>
-            )}
             {loading && (
               <div className="ai-chat-bubble ai-chat-bubble--assistant ai-chat-typing">
                 Thinking…
@@ -179,10 +152,10 @@ export default function AiChatWidget() {
             <input
               type="text"
               className="ai-chat-input"
-              placeholder={limitReached ? "Sign in to continue chatting…" : "Ask about syllabus or notes…"}
+              placeholder="Ask anything — syllabus, topics, or general questions…"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              disabled={loading || limitReached}
+              disabled={loading}
             />
             <button type="submit" className="btn btn-primary" disabled={disabled}>
               Send
