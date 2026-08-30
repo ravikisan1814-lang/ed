@@ -160,9 +160,12 @@ async function main() {
 
           if (!contentItems?.length) continue;
 
-          // Check if payload needs updating (not already rich content)
+          // Check if payload needs updating (missing rich content or has fallback placeholder)
           const needsUpdate = contentItems.some(
-            (ci) => !ci.locked_payload || ci.locked_payload.includes("under development")
+            (ci) => !ci.locked_payload 
+              || ci.locked_payload.includes("under development")
+              || ci.locked_payload.includes("will be added")
+              || (topicData && ci.locked_payload.split("<h3>Key Concepts</h3>").length < 2)
           );
 
           if (needsUpdate) {

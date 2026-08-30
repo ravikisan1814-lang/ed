@@ -2,154 +2,154 @@
   "physics": {
     "physical-quantities": {
       "precision-significant-figures": {
-        "key_concepts": ["Significant figures", "Precision vs accuracy", "Rules for counting sig figs"],
-        "formulas": ["Result precision = least precise measurement"],
-        "examples": ["0.0045 has 2 sig figs", "2.50 has 3 sig figs"]
+        "key_concepts": ["Significant figures represent the precision of a measurement", "Rules: non-zero digits are significant, leading zeros are NOT, captive zeros ARE, trailing zeros after decimal ARE", "In multiplication/division, result has same sig figs as least precise factor", "In addition/subtraction, result has same decimal places as least precise term"],
+        "formulas": ["Result precision = least precise measurement", "Relative error = Δx/x", "Percentage error = (Δx/x) × 100%"],
+        "examples": ["0.0045 has 2 sig figs (leading zeros don't count)", "2.50 has 3 sig figs (trailing zero after decimal counts)", "12.3 + 4.56 = 16.9 (limited to 1 decimal place)", "3.2 × 4.567 = 15 (limited to 2 sig figs)"]
       },
       "dimensional-analysis": {
-        "key_concepts": ["Dimensions", "Dimensional formula", "Applications"],
-        "formulas": ["[M^a L^b T^c]", "Homogeneity principle"],
-        "examples": ["Force: [MLT^-2]", "Energy: [ML^2T^-2]"]
+        "key_concepts": ["Dimensions express physical quantities in terms of M, L, T", "Principle of homogeneity: only quantities with same dimensions can be added/subtracted", "Used to check equation correctness, derive relationships, convert units", "Cannot determine dimensionless constants or add/subtract terms of different dimensions"],
+        "formulas": ["[M^a L^b T^c] = dimensional formula", "Homogeneity: [LHS] = [RHS]", "Force: [MLT⁻²], Energy: [ML²T⁻²], Power: [ML²T⁻³]"],
+        "examples": ["Check: v = u + at → [LT⁻¹] = [LT⁻¹] + [LT⁻²][T] = [LT⁻¹] ✓", "Check: s = ut + ½at² → [L] = [LT⁻¹][T] + [LT⁻²][T²] = [L] + [L] ✓", "Dimension of G from F = GMm/r²: [M⁻¹L³T⁻²]"]
       }
     },
     "vectors": {
       "triangle-parallelogram-polygon-laws": {
-        "key_concepts": ["Vector addition", "Triangle law", "Parallelogram law"],
-        "formulas": ["R = √(A² + B² + 2ABcosθ)", "tanα = Bsinθ/(A + Bcosθ)"],
-        "examples": ["Resultant of 3N and 4N at 90° = 5N"]
+        "key_concepts": ["Triangle law: if two vectors are represented by two sides of triangle in order, resultant is third side", "Parallelogram law: resultant is diagonal through common point", "Polygon law: multiple vectors form closed polygon → resultant is closing side", "Resultant magnitude and direction found using cosine and sine rules"],
+        "formulas": ["R = √(A² + B² + 2ABcosθ)", "tan α = Bsinθ/(A + Bcosθ)", "If θ = 90°: R = √(A²+B²), tan α = B/A", "If θ = 0°: R = A+B (maximum)", "If θ = 180°: R = |A-B| (minimum)"],
+        "examples": ["Two forces 3N and 4N at 90°: R = √(9+16) = 5N, tan α = 4/3, α = 53.1°", "Two forces 10N and 8N at 60°: R = √(100+64+80) = √244 = 15.62N", "Three forces 3N, 4N, 5N forming closed triangle → resultant = 0 (equilibrium)"]
       },
       "resolution-of-vectors": {
-        "key_concepts": ["Vector resolution", "Components", "Unit vectors"],
-        "formulas": ["A_x = A cos θ", "A_y = A sin θ"],
-        "examples": ["Resolve 10N at 30°: Ax = 8.66N, Ay = 5N"]
+        "key_concepts": ["Any vector can be resolved into two perpendicular components", "Components along x and y axes: A_x = A cos θ, A_y = A sin θ", "Original vector: A = √(A_x² + A_y²), θ = tan⁻¹(A_y/A_x)", "Unit vectors: î, ĵ, k̂ along x, y, z axes respectively"],
+        "formulas": ["A_x = A cos θ (horizontal component)", "A_y = A sin θ (vertical component)", "A = √(A_x² + A_y²)", "θ = tan⁻¹(A_y/A_x)", "Â = A/|A| = (A_x î + A_y ĵ)/A"],
+        "examples": ["Resolve 10N at 30°: A_x = 10 cos 30° = 8.66N, A_y = 10 sin 30° = 5N", "Force 50N at 60° to horizontal: horizontal = 25N, vertical = 43.3N", "Resultant of A=(3,4) and B=(1,2): R=(4,6), |R|=√52=7.21, θ=56.3°"]
       },
       "scalar-vector-product": {
-        "key_concepts": ["Dot product", "Cross product"],
-        "formulas": ["A·B = AB cos θ", "A×B = AB sin θ n̂"],
-        "examples": ["Work = F·d", "Torque = r×F"]
+        "key_concepts": ["Dot product (scalar product): A·B = AB cos θ, result is scalar", "Cross product (vector product): A×B = AB sin θ n̂, result is vector perpendicular to both", "Dot product gives work, power, flux", "Cross product gives torque, angular momentum, magnetic force"],
+        "formulas": ["A·B = AB cos θ = A_xB_x + A_yB_y + A_zB_z", "A×B = AB sin θ n̂ (right-hand rule)", "|A×B| = perpendicular component × magnitude", "Work W = F·d = Fd cos θ", "Torque τ = r×F"],
+        "examples": ["F = (3,4,0)N, d = (5,0,0)m: W = F·d = 15J", "r = (2,0,0)m, F = (0,3,0)N: τ = r×F = (0,0,6) N·m", "A·B = 0 means perpendicular, |A×B| = 0 means parallel"]
       }
     },
     "kinematics": {
       "projectile-motion": {
-        "key_concepts": ["Projectile motion", "Trajectory", "Range", "Maximum height"],
-        "formulas": ["R = u²sin2θ/g", "H = u²sin²θ/2g", "T = 2usinθ/g"],
-        "examples": ["Projectile at 45° gives maximum range"]
+        "key_concepts": ["Projectile motion combines horizontal uniform motion with vertical uniformly accelerated motion", "Horizontal velocity remains constant (no air resistance)", "Vertical motion has constant acceleration g downward", "Trajectory is a parabola", "Time of flight, maximum height, and range are key parameters"],
+        "formulas": ["T = 2u sin θ / g (time of flight)", "H = u² sin²θ / 2g (maximum height)", "R = u² sin 2θ / g (horizontal range)", "R_max at θ = 45°: R_max = u²/g", "Trajectory: y = x tan θ - gx²/(2u²cos²θ)", "Time of flight for horizontal projection: T = √(2h/g)"],
+        "examples": ["u=20m/s at 30°: T = 2×20×0.5/9.8 = 2.04s, H = 400×0.25/19.6 = 5.1m, R = 400×0.866/9.8 = 35.3m", "u=30m/s at 45°: R_max = 900/9.8 = 91.8m", "Two projectiles at θ and (90-θ) with same speed have same range"]
       }
     },
     "circular-motion": {
       "centripetal-acceleration-force": {
-        "key_concepts": ["Centripetal acceleration", "Centripetal force"],
-        "formulas": ["a_c = v²/r = ω²r", "F_c = mv²/r"],
-        "examples": ["Car on curved road: friction provides centripetal force"]
+        "key_concepts": ["Centripetal acceleration always points toward center of circle", "Centripetal force is not a new force — it's provided by tension, gravity, friction, etc.", "Angular quantities: θ (rad), ω = dθ/dt, α = dω/dt", "Relation: v = ωr, a_c = ω²r"],
+        "formulas": ["a_c = v²/r = ω²r", "F_c = mv²/r = mω²r", "T = 2π/ω = 2πr/v (period)", "f = 1/T = ω/2π (frequency)", "ω = 2πf"],
+        "examples": ["Car on curve r=50m, μ=0.5: max speed = √(μgr) = √(0.5×9.8×50) = 15.7 m/s", "Earth satellite: v = √(GM/r), T = 2πr/v", "Conical pendulum: T cos θ = mg, T sin θ = mv²/r"]
       }
     },
     "gravitation": {
       "newton-law-gravitation": {
-        "key_concepts": ["Newton's law of gravitation", "Gravitational constant"],
-        "formulas": ["F = GMm/r²", "g = GM/r²"],
-        "examples": ["g at Earth's surface = 9.8 m/s²"]
+        "key_concepts": ["Every particle attracts every other particle with force proportional to product of masses and inversely proportional to square of distance", "Gravitational constant G = 6.674×10⁻¹¹ N·m²/kg²", "Gravitational force is always attractive, weakest fundamental force", "Inside Earth, g decreases linearly with depth; outside, it follows inverse square law"],
+        "formulas": ["F = GMm/r²", "g = GM/R² (at surface)", "g' = g(1 - 2h/R) (at height h, h<<R)", "g' = g(1 - d/R) (at depth d)", "Escape velocity: v_e = √(2GM/R) = √(2gR)", "Orbital velocity: v_o = √(GM/r)"],
+        "examples": ["g at Earth's surface: g = 6.674×10⁻¹¹ × 5.97×10²⁴ / (6.371×10⁶)² = 9.81 m/s²", "Escape velocity from Earth: v_e = √(2×9.81×6.371×10⁶) = 11.2 km/s", "At height h=R: g' = g/4 = 2.45 m/s²"]
       }
     },
     "electric-charges": {
       "coulombs-law": {
-        "key_concepts": ["Coulomb's law", "Electric force"],
-        "formulas": ["F = kq₁q₂/r²", "k = 1/4πε₀"],
-        "examples": ["Force between two 1C charges 1m apart = 9×10⁹ N"]
+        "key_concepts": ["Force between two point charges is proportional to product of charges and inversely proportional to square of distance", "Force acts along line joining charges, attractive for opposite, repulsive for same", "Medium affects force: F = q₁q₂/(4πε₀εᵣr²)", "Superposition principle: total force = vector sum of individual forces"],
+        "formulas": ["F = kq₁q₂/r² = q₁q₂/(4πε₀r²)", "k = 8.99×10⁹ N·m²/C²", "ε₀ = 8.854×10⁻¹² C²/(N·m²)", "F_net = F₁ + F₂ + F₃ + ... (vector sum)"],
+        "examples": ["Two 1C charges 1m apart: F = 9×10⁹ N (huge!)"]
       }
     },
     "dc-circuits": {
       "ohms-law": {
-        "key_concepts": ["Ohm's law", "Resistance", "Resistivity"],
-        "formulas": ["V = IR", "R = ρL/A"],
-        "examples": ["12V across 4Ω resistor: I = 3A"]
+        "key_concepts": ["Ohm's law: V = IR at constant temperature", "Resistance depends on material (resistivity ρ), length L, area A", "Series: R_eq = R₁+R₂+..., same current", "Parallel: 1/R_eq = 1/R₁+1/R₂+..., same voltage"],
+        "formulas": ["V = IR", "R = ρL/A", "ρ = RA/L (resistivity)", "Series: R_eq = R₁+R₂+R₃", "Parallel: 1/R_eq = 1/R₁+1/R₂+1/R₃", "P = VI = I²R = V²/R"],
+        "examples": ["12V across 4Ω: I = V/R = 3A, P = VI = 36W", "Three 6Ω resistors in parallel: R_eq = 2Ω", "Potentiometer: V = IR, potential gradient = V/L"]
       }
     },
     "nuclear-physics": {
       "mass-defect-binding-energy": {
-        "key_concepts": ["Mass defect", "Binding energy", "Einstein's equation"],
-        "formulas": ["Δm = Zm_p + Nm_n - M", "BE = Δmc²"],
-        "examples": ["BE per nucleon for Fe-56 is maximum"]
+        "key_concepts": ["Mass defect: difference between sum of individual nucleon masses and actual nuclear mass", "Binding energy: energy equivalent of mass defect (E = Δmc²)", "BE per nucleon curve: peaks at Fe-56 (most stable)", "Nuclear fusion: light nuclei combine → energy released", "Nuclear fission: heavy nucleus splits → energy released"],
+        "formulas": ["Δm = Zm_p + Nm_n - M_nucleus", "BE = Δm × c²", "BE per nucleon = BE/A", "1 amu = 931.5 MeV/c²", "Q-value = (m_initial - m_final)c²"],
+        "examples": ["He-4: Δm = 2(1.007825) + 2(1.008665) - 4.002603 = 0.030377 amu, BE = 28.3 MeV, BE/nucleon = 7.07 MeV", "U-235 fission releases ~200 MeV per fission", "Sun: 4H → He releases 26.7 MeV per reaction"]
       }
     }
   },
   "chemistry": {
     "stoichiometry": {
       "mole-concept": {
-        "key_concepts": ["Mole", "Avogadro's number", "Molar mass"],
-        "formulas": ["n = m/M", "N = n × N_A"],
-        "examples": ["1 mole of C-12 = 12g = 6.022×10²³ atoms"]
+        "key_concepts": ["Mole: amount of substance containing Avogadro's number of particles", "Molar mass: mass of one mole of substance (g/mol)", "At STP, 1 mole of any gas occupies 22.4 L", "Molarity (M) = moles solute / liters solution", "Molality (m) = moles solute / kg solvent"],
+        "formulas": ["n = m/M (moles = mass/molar mass)", "N = n × N_A (particles = moles × Avogadro's number)", "N_A = 6.022×10²³ mol⁻¹", "Molarity: M = n/V(L)", "Molality: m = n/kg solvent", "Mass % = (mass solute/mass solution)×100%"],
+        "examples": ["1 mole of C-12 = 12g = 6.022×10²³ atoms", "Moles in 36g H₂O: n = 36/18 = 2 mol", "Volume of 2 mol O₂ at STP: V = 2×22.4 = 44.8 L", "0.5M NaCl solution: 0.5 mol in 1L = 29.22g NaCl per liter"]
       }
     },
     "atomic-structure": {
       "quantum-numbers": {
-        "key_concepts": ["Quantum numbers", "Orbitals", "Electron configuration"],
-        "formulas": ["n, l, m_l, m_s"],
-        "examples": ["For 3d orbital: n=3, l=2"]
+        "key_concepts": ["Four quantum numbers describe each electron uniquely", "n (principal): energy level/shell (1, 2, 3, ...)", "l (azimuthal): subshell shape (0 to n-1) → s,p,d,f", "m_l (magnetic): orbital orientation (-l to +l)", "m_s (spin): electron spin (+½ or -½)"],
+        "formulas": ["n = 1,2,3,... (principal quantum number)", "l = 0,1,...,n-1 (azimuthal quantum number)", "m_l = -l,...,0,...,+l (magnetic quantum number)", "m_s = +½ or -½ (spin quantum number)", "Max electrons in shell n = 2n²"],
+        "examples": ["3d orbital: n=3, l=2, m_l = -2,-1,0,+1,+2 (5 orbitals, 10 electrons)", "4f orbital: n=4, l=3, m_l = -3 to +3 (7 orbitals, 14 electrons)", "n=3 shell: max electrons = 2(9) = 18"]
       }
     },
     "chemical-bonding": {
       "vsepr-theory": {
-        "key_concepts": ["VSEPR theory", "Molecular geometry", "Bond angles"],
-        "formulas": ["Steric number = bonds + lone pairs"],
-        "examples": ["CH4: tetrahedral, 109.5°", "H2O: bent, 104.5°"]
+        "key_concepts": ["VSEPR: Valence Shell Electron Pair Repulsion theory", "Electron pairs arrange to minimize repulsion", "Order of repulsion: lp-lp > lp-bp > bp-bp", "Steric number = bonding pairs + lone pairs", "Determines molecular geometry and bond angles"],
+        "formulas": ["Steric number = (valence electrons + monovalent atoms - charge)/2", "SN=2: linear, 180°", "SN=3: trigonal planar, 120°", "SN=4: tetrahedral, 109.5°", "SN=5: trigonal bipyramidal, 90°/120°", "SN=6: octahedral, 90°"],
+        "examples": ["CH₄: SN=4, tetrahedral, 109.5°", "NH₃: SN=4 (3 bonds + 1 lp), trigonal pyramidal, 107°", "H₂O: SN=4 (2 bonds + 2 lp), bent, 104.5°", "BF₃: SN=3, trigonal planar, 120°", "PCl₅: SN=5, trigonal bipyramidal, 90°/120°"]
       }
     },
     "organic-basic-concepts": {
       "iupac-nomenclature": {
-        "key_concepts": ["IUPAC naming", "Functional groups", "Substituents"],
-        "formulas": ["Prefix + Root + Suffix"],
-        "examples": ["CH3CH2OH = Ethanol", "CH3COOH = Ethanoic acid"]
+        "key_concepts": ["IUPAC: International Union of Pure and Applied Chemistry naming system", "Identify longest carbon chain (parent)", "Number chain to give substituents lowest numbers", "Prefixes: mono-, di-, tri-, tetra- for multiples", "Suffixes: -ane, -ene, -yne for saturation"],
+        "formulas": ["Prefix + Root + Suffix", "Root: meth(1), eth(2), prop(3), but(4), pent(5), hex(6), hept(7), oct(8)"],
+        "examples": ["CH₃CH₂OH = ethanol (2C chain, -ol suffix)", "CH₃COOH = ethanoic acid (carboxylic acid)", "CH₂=CH-CH₃ = propene (3C, double bond)", "(CH₃)₂CHCH₃ = 2-methylpropane (isobutane)", "CH₃CHClCH₃ = 2-chloropropane"]
       }
     }
   },
   "biology": {
     "biomolecules-cell-biology": {
       "cell-introduction": {
-        "key_concepts": ["Cell theory", "Prokaryotic vs Eukaryotic", "Cell organelles"],
-        "formulas": ["Cell size: 1-100 μm"],
-        "examples": ["Animal cell: no cell wall, has centrioles", "Plant cell: has cell wall, chloroplasts"]
+        "key_concepts": ["Cell theory: all organisms made of cells, cell is basic unit of life, all cells come from pre-existing cells", "Prokaryotic cells: no nucleus, no membrane-bound organelles, smaller (1-10 μm)", "Eukaryotic cells: true nucleus, membrane-bound organelles, larger (10-100 μm)", "Animal cells lack cell wall, chloroplasts, large vacuole; have centrioles", "Plant cells have cell wall (cellulose), chloroplasts, large central vacuole"],
+        "formulas": ["Cell size range: 1-100 μm", "Surface area to volume ratio limits cell size"],
+        "examples": ["Human red blood cell: 7-8 μm, no nucleus", "Ostrich egg: 15 cm (largest cell)", "Bacterial cell: 1-5 μm, no nucleus", "Plant palisade cell: has chloroplasts, cell wall"]
       },
       "mitosis-meiosis": {
-        "key_concepts": ["Mitosis", "Meiosis", "Cell division"],
-        "formulas": ["Mitosis: 2n → 2n", "Meiosis: 2n → n"],
-        "examples": ["Mitosis: growth/repair", "Meiosis: gamete formation"]
+        "key_concepts": ["Mitosis: one division, produces 2 identical diploid cells (2n→2n)", "Meiosis: two divisions, produces 4 non-identical haploid cells (2n→n)", "Mitosis phases: prophase, metaphase, anaphase, telophase", "Meiosis I: homologous chromosomes separate (reduction division)", "Meiosis II: sister chromatids separate (like mitosis)", "Crossing over in prophase I increases genetic variation"],
+        "formulas": ["Mitosis: 2n → 2 × 2n (growth, repair, asexual reproduction)", "Meiosis: 2n → 4 × n (gamete formation, sexual reproduction)", "Chromosome number: diploid (2n) = 46 in humans, haploid (n) = 23"],
+        "examples": ["Human skin cell mitosis: 46 chromosomes → 2 cells with 46 each", "Human gamete meiosis: 46 chromosomes → 4 sperm/egg with 23 each", "Crossing over: exchange of genetic material between homologous chromosomes"]
       }
     },
     "floral-diversity": {
       "angiosperm-morphology": {
-        "key_concepts": ["Flower parts", "Pollination", "Fruit formation"],
-        "formulas": ["Ovary → Fruit", "Ovule → Seed"],
-        "examples": ["Rose: hypogynous flower", "Mustard: tetradynamous stamens"]
+        "key_concepts": ["Flower parts: sepals (calyx), petals (corolla), stamens (androecium), carpels (gynoecium)", "Stamen: anther (pollen) + filament", "Carpel: stigma + style + ovary (contains ovules)", "Ovary develops into fruit, ovule develops into seed", "Flower types: complete/incomplete, perfect/imperfect, hypogynous/perigynous/epigynous"],
+        "formulas": ["Ovary → Fruit", "Ovule → Seed", "Wall of ovary → Pericarp"],
+        "examples": ["Rose: hypogynous (ovary superior), 5 sepals, 5 petals, numerous stamens", "Mustard (Brassicaceae): tetradynamous stamens (4 long + 2 short)", "Pea (Fabaceae): papilionaceous corolla (banner, wings, keel)", "Sunflower: capitulum inflorescence (many small flowers in head)"]
       }
     }
   },
   "mathematics": {
     "set-theory": {
       "venn-diagram": {
-        "key_concepts": ["Venn diagrams", "Set operations", "De Morgan's laws"],
-        "formulas": ["n(A∪B) = n(A) + n(B) - n(A∩B)"],
-        "examples": ["If n(A)=20, n(B)=30, n(A∩B)=10, then n(A∪B)=40"]
+        "key_concepts": ["Venn diagrams visually represent set relationships", "Union (A∪B): all elements in A or B or both", "Intersection (A∩B): elements common to both A and B", "Complement (A'): elements not in A", "De Morgan's laws: (A∪B)' = A'∩B' and (A∩B)' = A'∪B'"],
+        "formulas": ["n(A∪B) = n(A) + n(B) - n(A∩B)", "n(A∪B∪C) = n(A)+n(B)+n(C)-n(A∩B)-n(B∩C)-n(C∩A)+n(A∩B∩C)", "n(A') = n(U) - n(A)", "If A and B disjoint: n(A∪B) = n(A)+n(B)"],
+        "examples": ["n(A)=20, n(B)=30, n(A∩B)=10: n(A∪B) = 20+30-10 = 40", "n(U)=100, n(A)=60, n(B)=50, n(A∩B)=30: n(A'∩B') = 100-60-50+30 = 20", "In a class of 50, 30 play cricket, 25 play football, 15 play both: only cricket = 15, only football = 10, neither = 10"]
       }
     },
     "trigonometry": {
       "trig-identities": {
-        "key_concepts": ["Trigonometric identities", "Inverse trig functions"],
-        "formulas": ["sin²θ + cos²θ = 1", "tanθ = sinθ/cosθ"],
-        "examples": ["If sinθ = 3/5, then cosθ = 4/5"]
+        "key_concepts": ["Fundamental identity: sin²θ + cos²θ = 1", "Dividing by cos²θ: tan²θ + 1 = sec²θ", "Dividing by sin²θ: 1 + cot²θ = csc²θ", "Compound angle formulas for sin(A±B) and cos(A±B)", "Double angle: sin2θ = 2sinθcosθ, cos2θ = cos²θ-sin²θ"],
+        "formulas": ["sin²θ + cos²θ = 1", "1 + tan²θ = sec²θ", "1 + cot²θ = csc²θ", "sin(A±B) = sinAcosB ± cosAsinB", "cos(A±B) = cosAcosB ∓ sinAsinB", "sin2θ = 2sinθcosθ", "cos2θ = cos²θ-sin²θ = 2cos²θ-1 = 1-2sin²θ"],
+        "examples": ["If sinθ = 3/5, then cosθ = 4/5, tanθ = 3/4", "sin 75° = sin(45°+30°) = (√6+√2)/4", "cos 2θ when cosθ = 4/5: cos2θ = 2(16/25)-1 = 7/25", "Simplify: (1-sin²θ)/cos²θ = 1"]
       }
     },
     "matrices": {
       "inverse-matrix": {
-        "key_concepts": ["Matrix inverse", "Adjoint", "Determinant"],
-        "formulas": ["A⁻¹ = adj(A)/|A|"],
-        "examples": ["For 2×2 matrix, swap diagonal, change sign of off-diagonal"]
+        "key_concepts": ["Inverse exists only if determinant ≠ 0 (non-singular matrix)", "A × A⁻¹ = A⁻¹ × A = I (identity matrix)", "For 2×2 matrix, swap diagonal elements, change sign of off-diagonal", "Used to solve systems of linear equations: X = A⁻¹B"],
+        "formulas": ["A⁻¹ = adj(A)/|A|", "For 2×2: [[a,b],[c,d]]⁻¹ = (1/(ad-bc))[[d,-b],[-c,a]]", "adj(A) = transpose of cofactor matrix", "|A| ≠ 0 for inverse to exist"],
+        "examples": ["A = [[2,1],[1,3]]: |A| = 6-1 = 5, A⁻¹ = (1/5)[[3,-1],[-1,2]]", "Solve: 2x+y=5, x+3y=7 → [[x],[y]] = A⁻¹[[5],[7]] = (1/5)[[3,-1],[-1,2]][[5],[7]] = [[2],[1]]", "Check: A×A⁻¹ = [[2,1],[1,3]]×(1/5)[[3,-1],[-1,2]] = [[1,0],[0,1]] = I"]
       }
     },
     "differentiation": {
       "chain-rule": {
-        "key_concepts": ["Chain rule", "Implicit differentiation", "Parametric differentiation"],
-        "formulas": ["dy/dx = dy/dt × dt/dx"],
-        "examples": ["d/dx[sin(x²)] = cos(x²) × 2x"]
+        "key_concepts": ["Chain rule: derivative of composite function f(g(x)) is f'(g(x))·g'(x)", "Used for functions within functions", "Implicit differentiation: differentiate both sides w.r.t. x, treat y as function of x", "Logarithmic differentiation: take ln of both sides before differentiating"],
+        "formulas": ["d/dx[f(g(x))] = f'(g(x))·g'(x)", "d/dx[sin(u)] = cos(u)·du/dx", "d/dx[e^u] = e^u·du/dx", "d/dx[ln(u)] = (1/u)·du/dx", "d/dx[u^n] = nu^(n-1)·du/dx"],
+        "examples": ["d/dx[sin(x²)] = cos(x²)·2x = 2x cos(x²)", "d/dx[e^(3x)] = 3e^(3x)", "d/dx[ln(sin x)] = (1/sin x)·cos x = cot x", "Implicit: x²+y²=25 → 2x+2y(dy/dx)=0 → dy/dx = -x/y", "d/dx[x^x] = x^x(1+ln x) (logarithmic differentiation)"]
       }
     }
   }
