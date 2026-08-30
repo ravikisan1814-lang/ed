@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
 
   // Auto-approve owner: use service_role client to bypass RLS on profiles table
   // (the anon client can't update profiles until the user is already approved — circular dependency)
+  let profile = null;
   if (isOwner) {
     const admin = createAdminClient();
     const { data: existingProfile } = await admin
@@ -56,13 +57,22 @@ export async function POST(request: NextRequest) {
         role: "owner",
       });
     }
+    // Re-fetch with admin client to get the updated profile
+    const { data: freshProfile } = await admin
+      .from("profiles")
+      .select("id, email, role, access_level, status")
+      .eq("id", data.user.id)
+      .maybeSingle();
+    profile = freshProfile;
+  } else {
+    // Non-owner: read profile with anon client (RLS allows own-profile select)
+    const { data: p } = await supabase
+      .from("profiles")
+      .select("id, email, role, access_level, status")
+      .eq("id", data.user.id)
+      .maybeSingle();
+    profile = p;
   }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, email, role, access_level, status")
-    .eq("id", data.user.id)
-    .maybeSingle();
 
   return NextResponse.json({
     data: {
