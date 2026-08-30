@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase-admin";
 
 export const dynamic = "force-dynamic";
 
@@ -31,21 +32,23 @@ export async function POST(request: NextRequest) {
 
   const isOwner = email === OWNER_EMAIL;
 
-  // Auto-approve owner on first successful signin (handles accounts created before this fix)
+  // Auto-approve owner: use service_role client to bypass RLS on profiles table
+  // (the anon client can't update profiles until the user is already approved — circular dependency)
   if (isOwner) {
-    const { data: existingProfile } = await supabase
+    const admin = createAdminClient();
+    const { data: existingProfile } = await admin
       .from("profiles")
       .select("id")
       .eq("id", data.user.id)
       .maybeSingle();
 
     if (existingProfile) {
-      await supabase
+      await admin
         .from("profiles")
         .update({ access_level: 1, status: "approved", role: "owner" })
         .eq("id", data.user.id);
     } else {
-      await supabase.from("profiles").insert({
+      await admin.from("profiles").insert({
         id: data.user.id,
         email: data.user.email ?? "",
         access_level: 1,

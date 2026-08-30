@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase-admin";
 
 export const dynamic = "force-dynamic";
 
@@ -32,15 +33,18 @@ export async function POST(request: NextRequest) {
   const isOwner = email === OWNER_EMAIL;
 
   if (data.user) {
+    // Use service_role client to bypass RLS — a non-approved user's own
+    // client cannot write to the profiles table (circular dependency).
+    const admin = createAdminClient();
     const patch: { access_level: number; status: string; role: string } = {
       access_level: isOwner ? 1 : 4,
       status: isOwner ? "approved" : "pending",
       role: isOwner ? "owner" : "member",
     };
-    await supabase
-      .from("profiles")
-      .update(patch)
-      .eq("id", data.user.id);
+    await admin.from("profiles").upsert(
+      { id: data.user.id, email: data.user.email ?? "", ...patch },
+      { onConflict: "id" }
+    );
   }
 
   return NextResponse.json({
