@@ -7,14 +7,15 @@
  * Target: academic-core exam group (pre-seeded by migration 0004).
  *
  * Folder structure -> hierarchy mapping:
- *   class-11|class-11e|class-12  -> source folders (all merged into academic-core)
- *   chemistry|physics|...         -> subjects (matched to existing subjects)
- *   unit-2-stoichiometry|...      -> chapters
- *   concepts|sets|examples|...    -> sub_chapters (content type)
- *   NN-name.json                  -> topics + content_items
+ *   class-11|class-11e|class-12  -> source class folders (exam group by class)
+ *   physics|chemistry|...        -> subjects (matched to existing subjects)
+ *   unit-2-stoichiometry|...     -> chapters
+ *   concepts|sets|examples|...   -> sub_chapters (content type)
+ *   NN-name.json                 -> topics + content_items
  *
- * For import-data/content (no class level):
- *   subject/unit/file.json        -> subject/chapter/sub_chapter (concepts)/topic
+ * Subject-first layouts (import-data/content) are mapped through config/content-map.json
+ * (source subject folder -> destination exam group + subject slug). Duplicated class
+ * folders (class-12/class-12/...) are normalized automatically.
  *
  * Usage:
  *   node scripts/migrate-content.mjs
@@ -27,8 +28,9 @@
  *                              ../ravikishan/backend/content,
  *                              ../ravikishan/backend/prisma/import-data/content,
  *                              ../ravikishan/backend-class12-test/content)
- *   MIGRATE_TARGET_EXAM_GROUP  (optional, default academic-core)
+ *   MIGRATE_TARGET_EXAM_GROUP  (optional; overrides placement when set)
  *   MIGRATE_SOURCE_CLASSES     (optional, comma-separated, default class-11,class-11e,class-12)
+ *   MIGRATE_CONTENT_MAP        (optional; path to JSON mapping config, default config/content-map.json)
  */
 import { createClient } from "@supabase/supabase-js";
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
@@ -94,6 +96,24 @@ const SOURCE_DIR_LIST = (env.MIGRATE_SOURCE_DIRS ?? defaultSourceDirs.join(","))
   .filter(Boolean);
 
 const IMPORT_DATA_CONTENT_DIR = join(projectRoot, "..", "ravikishan", "backend", "prisma", "import-data", "content");
+
+const CONTENT_MAP_PATH = env.MIGRATE_CONTENT_MAP
+  ? join(projectRoot, env.MIGRATE_CONTENT_MAP)
+  : join(projectRoot, "config", "content-map.json");
+
+function loadContentMap() {
+  if (existsSync(CONTENT_MAP_PATH)) {
+    try {
+      return JSON.parse(readFileSync(CONTENT_MAP_PATH, "utf8"));
+    } catch (err) {
+      console.warn(`  WARNING: Could not parse content map ${CONTENT_MAP_PATH}: ${err.message}`);
+    }
+  }
+  return {};
+}
+
+const contentMap = loadContentMap();
+const SUBJECT_PLACEMENTS = contentMap.subjectPlacements ?? {};
 
 SOURCE_DIR_LIST.forEach((dir) => {
   if (!existsSync(dir)) {
@@ -325,21 +345,29 @@ async function main() {
     const parts = rel.split(/[\\/]/);
     const isImportData = sourceDir.startsWith(IMPORT_DATA_CONTENT_DIR);
 
+    // Normalize duplicated class folders (e.g. class-12/class-12/physics/...).
+    while (parts.length >= 2 && parts[0] === parts[1] && CLASS_TO_EXAM_GROUP[parts[0]]) {
+      parts.splice(1, 1);
+    }
+
     let subjectSlug, chapterSlug, typeSlug, fileName, targetExamGroup;
+    let placementUsed = false;
 
     if (isImportData) {
       // import-data/content structure: subject/unit/[type/]file.json
       if (parts.length >= 3) {
-        subjectSlug = parts[0];
+        const rawSubject = parts[0];
+        const placement = SUBJECT_PLACEMENTS[rawSubject];
+        placementUsed = Boolean(placement?.subject);
+        subjectSlug = placement?.subject ?? rawSubject;
         chapterSlug = parts[1];
-        if (parts.length >= 4) {
-          typeSlug = parts[2];
-          fileName = parts[parts.length - 1];
-        } else {
-          typeSlug = "concepts";
-          fileName = parts[parts.length - 1];
-        }
-        targetExamGroup = IMPORT_SUBJECT_TO_EXAM_GROUP[subjectSlug] ?? TARGET_EXAM_GROUP;
+        typeSlug = parts.length >= 4 ? parts[2] : "concepts";
+        fileName = parts[parts.length - 1];
+        targetExamGroup =
+          TARGET_EXAM_GROUP ??
+          placement?.examGroup ??
+          IMPORT_SUBJECT_TO_EXAM_GROUP[rawSubject] ??
+          rawSubject;
       } else {
         console.warn(`  SKIP (unexpected depth): ${rel}`);
         stats.skipped++;
@@ -365,14 +393,17 @@ async function main() {
       fileName = parts[parts.length - 1];
     }
 
-    const mappedSubject = SUBJECT_MAP[subjectSlug];
-    if (!mappedSubject) {
-      console.warn(`  SKIP (unknown subject): ${rel}`);
-      stats.skipped++;
-      continue;
+    if (!placementUsed) {
+      const mappedSubject = SUBJECT_MAP[subjectSlug];
+      if (!mappedSubject) {
+        console.warn(`  SKIP (unknown subject): ${rel}`);
+        stats.skipped++;
+        continue;
+      }
+      subjectSlug = mappedSubject;
     }
 
-    groups.push({ file, fileName, rel, sourceDir, isImportData, subjectSlug: mappedSubject, chapterSlug, typeSlug, targetExamGroup });
+    groups.push({ file, fileName, rel, sourceDir, isImportData, subjectSlug, chapterSlug, typeSlug, targetExamGroup });
   }
 
   // Cache for exam groups and subjects

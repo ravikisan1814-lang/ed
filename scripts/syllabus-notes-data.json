@@ -1,0 +1,156 @@
+{
+  "physics": {
+    "physical-quantities": {
+      "precision-significant-figures": {
+        "key_concepts": ["Significant figures", "Precision vs accuracy", "Rules for counting sig figs"],
+        "formulas": ["Result precision = least precise measurement"],
+        "examples": ["0.0045 has 2 sig figs", "2.50 has 3 sig figs"]
+      },
+      "dimensional-analysis": {
+        "key_concepts": ["Dimensions", "Dimensional formula", "Applications"],
+        "formulas": ["[M^a L^b T^c]", "Homogeneity principle"],
+        "examples": ["Force: [MLT^-2]", "Energy: [ML^2T^-2]"]
+      }
+    },
+    "vectors": {
+      "triangle-parallelogram-polygon-laws": {
+        "key_concepts": ["Vector addition", "Triangle law", "Parallelogram law"],
+        "formulas": ["R = √(A² + B² + 2ABcosθ)", "tanα = Bsinθ/(A + Bcosθ)"],
+        "examples": ["Resultant of 3N and 4N at 90° = 5N"]
+      },
+      "resolution-of-vectors": {
+        "key_concepts": ["Vector resolution", "Components", "Unit vectors"],
+        "formulas": ["A_x = A cos θ", "A_y = A sin θ"],
+        "examples": ["Resolve 10N at 30°: Ax = 8.66N, Ay = 5N"]
+      },
+      "scalar-vector-product": {
+        "key_concepts": ["Dot product", "Cross product"],
+        "formulas": ["A·B = AB cos θ", "A×B = AB sin θ n̂"],
+        "examples": ["Work = F·d", "Torque = r×F"]
+      }
+    },
+    "kinematics": {
+      "projectile-motion": {
+        "key_concepts": ["Projectile motion", "Trajectory", "Range", "Maximum height"],
+        "formulas": ["R = u²sin2θ/g", "H = u²sin²θ/2g", "T = 2usinθ/g"],
+        "examples": ["Projectile at 45° gives maximum range"]
+      }
+    },
+    "circular-motion": {
+      "centripetal-acceleration-force": {
+        "key_concepts": ["Centripetal acceleration", "Centripetal force"],
+        "formulas": ["a_c = v²/r = ω²r", "F_c = mv²/r"],
+        "examples": ["Car on curved road: friction provides centripetal force"]
+      }
+    },
+    "gravitation": {
+      "newton-law-gravitation": {
+        "key_concepts": ["Newton's law of gravitation", "Gravitational constant"],
+        "formulas": ["F = GMm/r²", "g = GM/r²"],
+        "examples": ["g at Earth's surface = 9.8 m/s²"]
+      }
+    },
+    "electric-charges": {
+      "coulombs-law": {
+        "key_concepts": ["Coulomb's law", "Electric force"],
+        "formulas": ["F = kq₁q₂/r²", "k = 1/4πε₀"],
+        "examples": ["Force between two 1C charges 1m apart = 9×10⁹ N"]
+      }
+    },
+    "dc-circuits": {
+      "ohms-law": {
+        "key_concepts": ["Ohm's law", "Resistance", "Resistivity"],
+        "formulas": ["V = IR", "R = ρL/A"],
+        "examples": ["12V across 4Ω resistor: I = 3A"]
+      }
+    },
+    "nuclear-physics": {
+      "mass-defect-binding-energy": {
+        "key_concepts": ["Mass defect", "Binding energy", "Einstein's equation"],
+        "formulas": ["Δm = Zm_p + Nm_n - M", "BE = Δmc²"],
+        "examples": ["BE per nucleon for Fe-56 is maximum"]
+      }
+    }
+  },
+  "chemistry": {
+    "stoichiometry": {
+      "mole-concept": {
+        "key_concepts": ["Mole", "Avogadro's number", "Molar mass"],
+        "formulas": ["n = m/M", "N = n × N_A"],
+        "examples": ["1 mole of C-12 = 12g = 6.022×10²³ atoms"]
+      }
+    },
+    "atomic-structure": {
+      "quantum-numbers": {
+        "key_concepts": ["Quantum numbers", "Orbitals", "Electron configuration"],
+        "formulas": ["n, l, m_l, m_s"],
+        "examples": ["For 3d orbital: n=3, l=2"]
+      }
+    },
+    "chemical-bonding": {
+      "vsepr-theory": {
+        "key_concepts": ["VSEPR theory", "Molecular geometry", "Bond angles"],
+        "formulas": ["Steric number = bonds + lone pairs"],
+        "examples": ["CH4: tetrahedral, 109.5°", "H2O: bent, 104.5°"]
+      }
+    },
+    "organic-basic-concepts": {
+      "iupac-nomenclature": {
+        "key_concepts": ["IUPAC naming", "Functional groups", "Substituents"],
+        "formulas": ["Prefix + Root + Suffix"],
+        "examples": ["CH3CH2OH = Ethanol", "CH3COOH = Ethanoic acid"]
+      }
+    }
+  },
+  "biology": {
+    "biomolecules-cell-biology": {
+      "cell-introduction": {
+        "key_concepts": ["Cell theory", "Prokaryotic vs Eukaryotic", "Cell organelles"],
+        "formulas": ["Cell size: 1-100 μm"],
+        "examples": ["Animal cell: no cell wall, has centrioles", "Plant cell: has cell wall, chloroplasts"]
+      },
+      "mitosis-meiosis": {
+        "key_concepts": ["Mitosis", "Meiosis", "Cell division"],
+        "formulas": ["Mitosis: 2n → 2n", "Meiosis: 2n → n"],
+        "examples": ["Mitosis: growth/repair", "Meiosis: gamete formation"]
+      }
+    },
+    "floral-diversity": {
+      "angiosperm-morphology": {
+        "key_concepts": ["Flower parts", "Pollination", "Fruit formation"],
+        "formulas": ["Ovary → Fruit", "Ovule → Seed"],
+        "examples": ["Rose: hypogynous flower", "Mustard: tetradynamous stamens"]
+      }
+    }
+  },
+  "mathematics": {
+    "set-theory": {
+      "venn-diagram": {
+        "key_concepts": ["Venn diagrams", "Set operations", "De Morgan's laws"],
+        "formulas": ["n(A∪B) = n(A) + n(B) - n(A∩B)"],
+        "examples": ["If n(A)=20, n(B)=30, n(A∩B)=10, then n(A∪B)=40"]
+      }
+    },
+    "trigonometry": {
+      "trig-identities": {
+        "key_concepts": ["Trigonometric identities", "Inverse trig functions"],
+        "formulas": ["sin²θ + cos²θ = 1", "tanθ = sinθ/cosθ"],
+        "examples": ["If sinθ = 3/5, then cosθ = 4/5"]
+      }
+    },
+    "matrices": {
+      "inverse-matrix": {
+        "key_concepts": ["Matrix inverse", "Adjoint", "Determinant"],
+        "formulas": ["A⁻¹ = adj(A)/|A|"],
+        "examples": ["For 2×2 matrix, swap diagonal, change sign of off-diagonal"]
+      }
+    },
+    "differentiation": {
+      "chain-rule": {
+        "key_concepts": ["Chain rule", "Implicit differentiation", "Parametric differentiation"],
+        "formulas": ["dy/dx = dy/dt × dt/dx"],
+        "examples": ["d/dx[sin(x²)] = cos(x²) × 2x"]
+      }
+    }
+  }
+}

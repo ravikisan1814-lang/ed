@@ -1,0 +1,41 @@
+{
+  "_comment": "Central mapping for source content folders -> platform hierarchy. Read by scripts/migrate-content.mjs (import-data/subject-first layout). Each key is a source subject folder name; value overrides the destination exam group + subject slug. examGroup and subject must reference existing slugs (subjects are upserted if missing).",
+  "subjectPlacements": {
+    "physics": {
+      "examGroup": "class-11",
+      "subject": "physics"
+    },
+    "chemistry": {
+      "examGroup": "class-11",
+      "subject": "chemistry"
+    },
+    "mathematics": {
+      "examGroup": "class-11",
+      "subject": "mathematics"
+    },
+    "biology": {
+      "examGroup": "class-11",
+      "subject": "biology"
+    },
+    "english": {
+      "examGroup": "class-11",
+      "subject": "english"
+    },
+    "nepali": {
+      "examGroup": "class-11",
+      "subject": "nepali"
+    },
+    "computer-science": {
+      "examGroup": "class-11",
+      "subject": "computer-science"
+    },
+    "general-knowledge": {
+      "examGroup": "general-knowledge",
+      "subject": "world-knowledge"
+    },
+    "loksewa": {
+      "examGroup": "loksewa",
+      "subject": "general-knowledge"
+    }
+  }
+}

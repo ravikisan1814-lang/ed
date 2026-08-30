@@ -146,7 +146,68 @@ const MOLECULES: Record<string, { name: string; displayName: string; atoms: Arra
   methane: { name: "CH4", displayName: "Methane",
     atoms: [{ symbol:"C", pos:[0,0,0], color:0x52525b, radius:0.38 }, { symbol:"H", pos:[0.63,0.63,0.63], color:0xffffff, radius:0.25 }, { symbol:"H", pos:[-0.63,-0.63,0.63], color:0xffffff, radius:0.25 }, { symbol:"H", pos:[0.63,-0.63,-0.63], color:0xffffff, radius:0.25 }, { symbol:"H", pos:[-0.63,0.63,-0.63], color:0xffffff, radius:0.25 }],
     bonds: [{ from:[0,0,0], to:[0.63,0.63,0.63], type:"single" }, { from:[0,0,0], to:[-0.63,-0.63,0.63], type:"single" }, { from:[0,0,0], to:[0.63,-0.63,-0.63], type:"single" }, { from:[0,0,0], to:[-0.63,0.63,-0.63], type:"single" }] },
+  ammonia: { name: "NH3", displayName: "Ammonia",
+    atoms: [{ symbol:"N", pos:[0,0.2,0], color:0x3b82f6, radius:0.38 }, { symbol:"H", pos:[0.5,-0.3,0], color:0xffffff, radius:0.25 }, { symbol:"H", pos:[-0.5,-0.3,0], color:0xffffff, radius:0.25 }, { symbol:"H", pos:[0,0,-0.6], color:0xffffff, radius:0.25 }],
+    bonds: [{ from:[0,0.2,0], to:[0.5,-0.3,0], type:"single" }, { from:[0,0.2,0], to:[-0.5,-0.3,0], type:"single" }, { from:[0,0.2,0], to:[0,0,-0.6], type:"single" }] },
+  ethane: { name: "C2H6", displayName: "Ethane",
+    atoms: [{ symbol:"C", pos:[-0.5,0,0], color:0x52525b, radius:0.35 }, { symbol:"C", pos:[0.5,0,0], color:0x52525b, radius:0.35 }, { symbol:"H", pos:[-0.8,0.5,0.3], color:0xffffff, radius:0.22 }, { symbol:"H", pos:[-0.8,-0.5,-0.3], color:0xffffff, radius:0.22 }, { symbol:"H", pos:[-0.8,0,-0.6], color:0xffffff, radius:0.22 }, { symbol:"H", pos:[0.8,0.5,0.3], color:0xffffff, radius:0.22 }, { symbol:"H", pos:[0.8,-0.5,-0.3], color:0xffffff, radius:0.22 }, { symbol:"H", pos:[0.8,0,0.6], color:0xffffff, radius:0.22 }],
+    bonds: [{ from:[-0.5,0,0], to:[0.5,0,0], type:"single" }, { from:[-0.5,0,0], to:[-0.8,0.5,0.3], type:"single" }, { from:[-0.5,0,0], to:[-0.8,-0.5,-0.3], type:"single" }, { from:[-0.5,0,0], to:[-0.8,0,-0.6], type:"single" }, { from:[0.5,0,0], to:[0.8,0.5,0.3], type:"single" }, { from:[0.5,0,0], to:[0.8,-0.5,-0.3], type:"single" }, { from:[0.5,0,0], to:[0.8,0,0.6], type:"single" }] },
+  ethene: { name: "C2H4", displayName: "Ethene",
+    atoms: [{ symbol:"C", pos:[-0.5,0,0], color:0x52525b, radius:0.35 }, { symbol:"C", pos:[0.5,0,0], color:0x52525b, radius:0.35 }, { symbol:"H", pos:[-0.8,0.6,0.2], color:0xffffff, radius:0.22 }, { symbol:"H", pos:[-0.8,-0.6,-0.2], color:0xffffff, radius:0.22 }, { symbol:"H", pos:[0.8,0.6,-0.2], color:0xffffff, radius:0.22 }, { symbol:"H", pos:[0.8,-0.6,0.2], color:0xffffff, radius:0.22 }],
+    bonds: [{ from:[-0.5,0,0], to:[0.5,0,0], type:"double" }, { from:[-0.5,0,0], to:[-0.8,0.6,0.2], type:"single" }, { from:[-0.5,0,0], to:[-0.8,-0.6,-0.2], type:"single" }, { from:[0.5,0,0], to:[0.8,0.6,-0.2], type:"single" }, { from:[0.5,0,0], to:[0.8,-0.6,0.2], type:"single" }] },
+  benzene: { name: "C6H6", displayName: "Benzene",
+    atoms: [
+      { symbol:"C", pos:[0.8,0,0], color:0x52525b, radius:0.32 },
+      { symbol:"C", pos:[0.4,0.7,0], color:0x52525b, radius:0.32 },
+      { symbol:"C", pos:[-0.4,0.7,0], color:0x52525b, radius:0.32 },
+      { symbol:"C", pos:[-0.8,0,0], color:0x52525b, radius:0.32 },
+      { symbol:"C", pos:[-0.4,-0.7,0], color:0x52525b, radius:0.32 },
+      { symbol:"C", pos:[0.4,-0.7,0], color:0x52525b, radius:0.32 },
+      { symbol:"H", pos:[1.3,0,0], color:0xffffff, radius:0.2 },
+      { symbol:"H", pos:[0.65,1.1,0], color:0xffffff, radius:0.2 },
+      { symbol:"H", pos:[-0.65,1.1,0], color:0xffffff, radius:0.2 },
+      { symbol:"H", pos:[-1.3,0,0], color:0xffffff, radius:0.2 },
+      { symbol:"H", pos:[-0.65,-1.1,0], color:0xffffff, radius:0.2 },
+      { symbol:"H", pos:[0.65,-1.1,0], color:0xffffff, radius:0.2 },
+    ],
+    bonds: [
+      { from:[0.8,0,0], to:[0.4,0.7,0], type:"aromatic" },
+      { from:[0.4,0.7,0], to:[-0.4,0.7,0], type:"aromatic" },
+      { from:[-0.4,0.7,0], to:[-0.8,0,0], type:"aromatic" },
+      { from:[-0.8,0,0], to:[-0.4,-0.7,0], type:"aromatic" },
+      { from:[-0.4,-0.7,0], to:[0.4,-0.7,0], type:"aromatic" },
+      { from:[0.4,-0.7,0], to:[0.8,0,0], type:"aromatic" },
+      { from:[0.8,0,0], to:[1.3,0,0], type:"single" },
+      { from:[0.4,0.7,0], to:[0.65,1.1,0], type:"single" },
+      { from:[-0.4,0.7,0], to:[-0.65,1.1,0], type:"single" },
+      { from:[-0.8,0,0], to:[-1.3,0,0], type:"single" },
+      { from:[-0.4,-0.7,0], to:[-0.65,-1.1,0], type:"single" },
+      { from:[0.4,-0.7,0], to:[0.65,-1.1,0], type:"single" },
+    ]
+  },
+  nacl: { name: "NaCl", displayName: "Sodium Chloride",
+    atoms: [{ symbol:"Na", pos:[0,0,0], color:0xa855f7, radius:0.45 }, { symbol:"Cl", pos:[1.2,0,0], color:0x22c55e, radius:0.4 }],
+    bonds: [{ from:[0,0,0], to:[1.2,0,0], type:"ionic" }]
+  },
 };
+
+const PH_SCALE = [
+  { value: 0, label: "0", name: "Strong Acid", color: "#ef4444" },
+  { value: 1, label: "1", name: "Stomach acid", color: "#ef4444" },
+  { value: 2, label: "2", name: "Vinegar", color: "#f97316" },
+  { value: 3, label: "3", name: "Lemon juice", color: "#f97316" },
+  { value: 4, label: "4", name: "Tomato juice", color: "#eab308" },
+  { value: 5, label: "5", name: "Black coffee", color: "#eab308" },
+  { value: 6, label: "6", name: "Urinary", color: "#84cc16" },
+  { value: 7, label: "7", name: "Pure Water", color: "#22c55e" },
+  { value: 8, label: "8", name: "Sea water", color: "#22c55e" },
+  { value: 9, label: "9", name: "Baking soda", color: "#06b6d4" },
+  { value: 10, label: "10", name: "Ammonia", color: "#06b6d4" },
+  { value: 11, label: "11", name: "Soapy water", color: "#3b82f6" },
+  { value: 12, label: "12", name: "Sodium hydroxide", color: "#3b82f6" },
+  { value: 13, label: "13", name: "Oven cleaner", color: "#6366f1" },
+  { value: 14, label: "14", name: "Lye", color: "#6366f1" },
+];
 
 function PeriodicTable3D({ onSelectElement, searchQuery, filterCategory, autoRotate }: { onSelectElement: (el: typeof ALL_ELEMENTS[0]) => void; searchQuery: string; filterCategory: string; autoRotate: boolean }) {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -360,6 +421,48 @@ function PeriodicTable2D({ onSelectElement, searchQuery, filterCategory }: { onS
   );
 }
 
+function PHScaleViz() {
+  const [phValue, setPhValue] = useState(7);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col items-center gap-3">
+        <div className="flex h-12 w-full rounded-lg overflow-hidden">
+          {PH_SCALE.map((item) => (
+            <div
+              key={item.value}
+              className="flex-1 flex items-end justify-center pb-1 cursor-pointer hover:opacity-80 transition-opacity"
+              style={{ backgroundColor: item.color }}
+              onClick={() => setPhValue(item.value)}
+              title={item.name}
+            >
+              <span className="text-white text-xs font-bold">{item.label}</span>
+            </div>
+          ))}
+        </div>
+        <input
+          type="range"
+          min={0}
+          max={14}
+          value={phValue}
+          onChange={(e) => setPhValue(Number(e.target.value))}
+          className="w-full accent-blue-500"
+        />
+        <div className="text-center">
+          <div className="text-2xl font-bold" style={{ color: PH_SCALE[phValue]?.color }}>{phValue.toFixed(1)}</div>
+          <div className="text-sm text-muted-foreground">{PH_SCALE[phValue]?.name}</div>
+        </div>
+      </div>
+      <MeaningPanel
+        title="pH Scale"
+        meaning="pH measures how acidic or basic a solution is. It is the negative logarithm of hydrogen ion concentration."
+        points={[`pH = -log[H⁺]`, "pH < 7 = acidic", "pH = 7 = neutral", "pH > 7 = basic", "[H⁺] = 10^(-pH) M"]}
+        color="green"
+      />
+    </div>
+  );
+}
+
 export default function ChemistryLab() {
   const [selectedElement, setSelectedElement] = useState<typeof ALL_ELEMENTS[number] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -367,6 +470,7 @@ export default function ChemistryLab() {
   const [autoRotate, setAutoRotate] = useState(true);
   const [viewMode, setViewMode] = useState<"3d" | "2d">("3d");
   const [selectedMolecule, setSelectedMolecule] = useState("water");
+  const [activeSection, setActiveSection] = useState<"periodic" | "molecules" | "ph">("periodic");
 
   const handleSelectElement = useCallback((el: typeof ALL_ELEMENTS[number]) => {
     setSelectedElement(el);
@@ -384,80 +488,126 @@ export default function ChemistryLab() {
     <div className="w-full space-y-6">
       <div className="flex flex-col gap-2">
         <h2 className="text-xl font-semibold">Chemistry Lab</h2>
-        <p className="text-sm text-muted-foreground">Interactive periodic table and molecular geometry visualizations.</p>
+        <p className="text-sm text-muted-foreground">Interactive periodic table, molecular geometry, and pH scale visualizations.</p>
       </div>
-      <div className="flex flex-wrap gap-3 items-center">
-        <input type="text" placeholder="Search by name, symbol, or number..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full sm:w-64 px-3 py-2 rounded-lg border border-border bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50" />
-        <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}
-          className="w-full sm:w-40 px-3 py-2 rounded-lg border border-border bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50">
-          {categories.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
-        </select>
-        <button onClick={() => setAutoRotate(!autoRotate)}
-          className={`flex-1 min-w-[100px] px-3 py-2 rounded-lg border transition-all text-sm ${autoRotate ? "bg-blue-500/20 border-blue-500/50 text-blue-400" : "border-border text-muted-foreground hover:border-blue-500/30"}`}>
-          Auto-Rotate {autoRotate ? "ON" : "OFF"}
-        </button>
-        <div className="flex rounded-lg border border-border overflow-hidden">
-          {(["3d", "2d"] as const).map((m) => (
-            <button key={m} onClick={() => setViewMode(m)}
-              className={`flex-1 min-w-[80px] px-3 py-2 text-sm font-medium transition-all ${viewMode === m ? "bg-muted text-foreground" : "bg-card text-muted-foreground hover:text-foreground"}`}>
-              {m.toUpperCase()}
+
+      {/* Section tabs */}
+      <div className="flex gap-2 flex-wrap">
+        {[
+          { key: "periodic", label: "Periodic Table" },
+          { key: "molecules", label: "Molecular Models" },
+          { key: "ph", label: "pH Scale" },
+        ].map((section) => (
+          <button
+            key={section.key}
+            onClick={() => setActiveSection(section.key as "periodic" | "molecules" | "ph")}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              activeSection === section.key
+                ? "bg-green-500 text-white"
+                : "bg-card border border-border text-muted-foreground hover:border-green-500/50"
+            }`}
+          >
+            {section.label}
+          </button>
+        ))}
+      </div>
+
+      {activeSection === "periodic" && (
+        <>
+          <div className="flex flex-wrap gap-3 items-center">
+            <input type="text" placeholder="Search by name, symbol, or number..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full sm:w-64 px-3 py-2 rounded-lg border border-border bg-card text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50" />
+            <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}
+              className="w-full sm:w-40 px-3 py-2 rounded-lg border border-border bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+              {categories.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
+            </select>
+            <button onClick={() => setAutoRotate(!autoRotate)}
+              className={`flex-1 min-w-[100px] px-3 py-2 rounded-lg border transition-all text-sm ${autoRotate ? "bg-blue-500/20 border-blue-500/50 text-blue-400" : "border-border text-muted-foreground hover:border-blue-500/30"}`}>
+              Auto-Rotate {autoRotate ? "ON" : "OFF"}
             </button>
-          ))}
-        </div>
-      </div>
-
-      <LabCard title="Periodic Table" subtitle="118 Elements">
-        {viewMode === "3d" ? (
-          <PeriodicTable3D onSelectElement={handleSelectElement} searchQuery={searchQuery} filterCategory={filterCategory} autoRotate={autoRotate} />
-        ) : (
-          <PeriodicTable2D onSelectElement={handleSelectElement} searchQuery={searchQuery} filterCategory={filterCategory} />
-        )}
-        <div className="mt-4 flex flex-wrap gap-2">
-          {categories.filter((c) => c.key).map((cat) => (
-            <div key={cat.key} className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
-              onClick={() => setFilterCategory(filterCategory === cat.key ? "" : cat.key)}>
-              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: `#${CATEGORY_COLORS[cat.key]?.toString(16).padStart(6, "0") ?? "6b7280"}` }} />
-              {cat.label}
+            <div className="flex rounded-lg border border-border overflow-hidden">
+              {(["3d", "2d"] as const).map((m) => (
+                <button key={m} onClick={() => setViewMode(m)}
+                  className={`flex-1 min-w-[80px] px-3 py-2 text-sm font-medium transition-all ${viewMode === m ? "bg-muted text-foreground" : "bg-card text-muted-foreground hover:text-foreground"}`}>
+                  {m.toUpperCase()}
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
-      </LabCard>
-
-      {selectedElement && (
-        <LabCard title={`${selectedElement.symbol} — ${selectedElement.name}`} subtitle={`#${selectedElement.number}`}>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            <ResultBadge label="Atomic Mass" value={String(selectedElement.mass)} />
-            <ResultBadge label="Category" value={CATEGORY_LABELS[selectedElement.category] ?? selectedElement.category} />
-            <ResultBadge label="Phase" value={selectedElement.phase} />
-            <ResultBadge label="Valency" value={String(selectedElement.valency)} />
           </div>
-          <p className="mt-3 text-xs text-muted-foreground"><span className="font-semibold text-foreground">Electron Config:</span> <code className="text-blue-400">{selectedElement.electronConfig}</code></p>
-          <button type="button" onClick={() => setSelectedElement(null)} className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors">Close</button>
+
+          <LabCard title="Periodic Table" subtitle="118 Elements">
+            {viewMode === "3d" ? (
+              <PeriodicTable3D onSelectElement={handleSelectElement} searchQuery={searchQuery} filterCategory={filterCategory} autoRotate={autoRotate} />
+            ) : (
+              <PeriodicTable2D onSelectElement={handleSelectElement} searchQuery={searchQuery} filterCategory={filterCategory} />
+            )}
+            <div className="mt-4 flex flex-wrap gap-2">
+              {categories.filter((c) => c.key).map((cat) => (
+                <div key={cat.key} className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+                  onClick={() => setFilterCategory(filterCategory === cat.key ? "" : cat.key)}>
+                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: `#${CATEGORY_COLORS[cat.key]?.toString(16).padStart(6, "0") ?? "6b7280"}` }} />
+                  {cat.label}
+                </div>
+              ))}
+            </div>
+          </LabCard>
+
+          {selectedElement && (
+            <LabCard title={`${selectedElement.symbol} — ${selectedElement.name}`} subtitle={`#${selectedElement.number}`}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                <ResultBadge label="Atomic Mass" value={String(selectedElement.mass)} />
+                <ResultBadge label="Category" value={CATEGORY_LABELS[selectedElement.category] ?? selectedElement.category} />
+                <ResultBadge label="Phase" value={selectedElement.phase} />
+                <ResultBadge label="Valency" value={String(selectedElement.valency)} />
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground"><span className="font-semibold text-foreground">Electron Config:</span> <code className="text-blue-400">{selectedElement.electronConfig}</code></p>
+              <button type="button" onClick={() => setSelectedElement(null)} className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors">Close</button>
+            </LabCard>
+          )}
+        </>
+      )}
+
+      {activeSection === "molecules" && (
+        <LabCard title="3D Molecular Models" subtitle="Sphere-and-stick representation">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1"><MolecularModel3D moleculeKey={selectedMolecule} /></div>
+            <div className="w-full sm:w-48 flex flex-col gap-3">
+              <select value={selectedMolecule} onChange={(e) => setSelectedMolecule(e.target.value)}
+                className="w-full rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+                {Object.entries(MOLECULES).map(([key, mol]) => <option key={key} value={key}>{mol.displayName} ({mol.name})</option>)}
+              </select>
+              <MeaningPanel title={MOLECULES[selectedMolecule]?.displayName ?? "Molecule"}
+                meaning="Molecular geometry determines chemical reactivity. VSEPR theory predicts shape from electron pair repulsion."
+                points={[
+                  "H2O: bent (104.5°), polar",
+                  "CO2: linear (180°), nonpolar",
+                  "CH4: tetrahedral (109.5°), nonpolar",
+                  "NH3: trigonal pyramidal (107°), polar",
+                  "C2H6: tetrahedral around each C",
+                  "C6H6: planar hexagonal (benzene ring)",
+                ]}
+                color="green"
+              />
+              <CollapsibleControls label="Atom Colors">
+                <div className="space-y-1 text-xs text-muted-foreground">
+                  <p><span className="text-red-400">●</span> Oxygen (O)</p>
+                  <p><span className="text-gray-400">●</span> Carbon (C)</p>
+                  <p><span className="text-blue-400">●</span> Nitrogen (N)</p>
+                  <p><span className="text-white">●</span> Hydrogen (H)</p>
+                  <p><span className="text-purple-400">●</span> Sodium (Na)</p>
+                  <p><span className="text-green-400">●</span> Chlorine (Cl)</p>
+                </div>
+              </CollapsibleControls>
+            </div>
+          </div>
         </LabCard>
       )}
 
-      <LabCard title="3D Molecular Models" subtitle="Sphere-and-stick representation">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1"><MolecularModel3D moleculeKey={selectedMolecule} /></div>
-          <div className="w-full sm:w-48 flex flex-col gap-3">
-            <select value={selectedMolecule} onChange={(e) => setSelectedMolecule(e.target.value)}
-              className="w-full rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50">
-              {Object.entries(MOLECULES).map(([key, mol]) => <option key={key} value={key}>{mol.displayName} ({mol.name})</option>)}
-            </select>
-            <MeaningPanel title={MOLECULES[selectedMolecule]?.displayName ?? "Molecule"}
-              meaning="Molecular geometry determines chemical reactivity. VSEPR theory predicts shape from electron pair repulsion."
-              points={["H2O: bent (104.5 deg), polar", "CO2: linear (180 deg), nonpolar", "CH4: tetrahedral (109.5 deg), nonpolar"]} color="green" />
-            <CollapsibleControls label="Atom Colors">
-              <div className="space-y-1 text-xs text-muted-foreground">
-                <p><span className="text-red-400">●</span> Oxygen (O)</p>
-                <p><span className="text-gray-400">●</span> Carbon (C)</p>
-                <p><span className="text-white">●</span> Hydrogen (H)</p>
-              </div>
-            </CollapsibleControls>
-          </div>
-        </div>
-      </LabCard>
+      {activeSection === "ph" && (
+        <LabCard title="pH Scale" subtitle="Measure of acidity/basicity">
+          <PHScaleViz />
+        </LabCard>
+      )}
     </div>
   );
 }

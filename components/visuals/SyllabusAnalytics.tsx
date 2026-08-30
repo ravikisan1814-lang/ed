@@ -20,6 +20,7 @@ interface GroupStats {
   topics: number;
   items: number;
   tierCounts: number[];
+  subjectCounts: Record<string, number>;
 }
 
 function computeStats(tree: ExamGroupNode[] | null): GroupStats[] {
@@ -27,8 +28,10 @@ function computeStats(tree: ExamGroupNode[] | null): GroupStats[] {
     const topics: string[] = [];
     const tierCounts = [0, 0, 0, 0];
     let items = 0;
+    const subjectCounts: Record<string, number> = {};
 
     for (const subject of group.subjects ?? []) {
+      let subjectTopics = 0;
       for (const chapter of subject.chapters ?? []) {
         for (const sub of chapter.sub_chapters ?? []) {
           for (const topic of sub.topics ?? []) {
@@ -38,9 +41,11 @@ function computeStats(tree: ExamGroupNode[] | null): GroupStats[] {
               const tier = Math.min(Math.max(item.access_level, 1), 4) - 1;
               tierCounts[tier] += 1;
             }
+            subjectTopics++;
           }
         }
       }
+      subjectCounts[subject.name] = subjectTopics;
     }
 
     return {
@@ -48,14 +53,15 @@ function computeStats(tree: ExamGroupNode[] | null): GroupStats[] {
       topics: topics.length,
       items,
       tierCounts,
+      subjectCounts,
     };
   });
 }
 
 /**
- * Real-data syllabus analytics: bar chart of topics/notes per exam group and
- * a donut of content notes per access tier, computed from the fetched
- * /api/hierarchy tree. Plotly is only loaded when the panel is opened.
+ * Real-data syllabus analytics: bar chart of topics/notes per exam group,
+ * a donut of content notes per access tier, a radar chart of subject depth,
+ * and a stacked bar of topic distribution per subject.
  */
 export default function SyllabusAnalytics({
   tree,
@@ -121,14 +127,90 @@ export default function SyllabusAnalytics({
     return { data, layout };
   }, [stats]);
 
+  // Radar chart: subject depth per exam group
+  const radarFigure = useMemo(() => {
+    if (stats.length === 0) return { data: [], layout: {} as Partial<Layout> };
+
+    // Collect all unique subject names across all groups
+    const allSubjects = new Set<string>();
+    for (const s of stats) {
+      for (const subj of Object.keys(s.subjectCounts)) {
+        allSubjects.add(subj);
+      }
+    }
+    const subjectNames = Array.from(allSubjects).sort();
+
+    const data: Data[] = stats.map((s, i) => ({
+      type: "scatterpolar",
+      r: subjectNames.map((subj) => s.subjectCounts[subj] ?? 0),
+      theta: subjectNames,
+      fill: "toself",
+      name: s.name,
+      line: { color: ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444"][i % 4] },
+      fillcolor: ["rgba(59,130,246,0.3)", "rgba(34,197,94,0.3)", "rgba(245,158,11,0.3)", "rgba(239,68,68,0.3)"][i % 4],
+    }));
+
+    const layout: Partial<Layout> = {
+      title: { text: "Subject depth comparison (topics per subject)", font: { size: 14 } },
+      height: 380,
+      polar: {
+        radialaxis: { visible: true, range: [0, Math.max(...stats.map((s) => Math.max(...Object.values(s.subjectCounts)))) + 2] },
+      },
+      showlegend: true,
+      legend: { x: 1.02, y: 1 },
+      margin: { t: 48, b: 32, l: 32, r: 80 },
+      paper_bgcolor: "rgba(0,0,0,0)",
+      plot_bgcolor: "rgba(0,0,0,0)",
+      font: { family: "inherit" },
+    };
+    return { data, layout };
+  }, [stats]);
+
+  // Stacked bar: topics per subject within each exam group
+  const stackedFigure = useMemo(() => {
+    if (stats.length === 0) return { data: [], layout: {} as Partial<Layout> };
+
+    const allSubjects = new Set<string>();
+    for (const s of stats) {
+      for (const subj of Object.keys(s.subjectCounts)) {
+        allSubjects.add(subj);
+      }
+    }
+    const subjectNames = Array.from(allSubjects).sort();
+    const colors = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316"];
+
+    const data: Data[] = subjectNames.map((subj, i) => ({
+      type: "bar",
+      name: subj,
+      x: stats.map((s) => s.name),
+      y: stats.map((s) => s.subjectCounts[subj] ?? 0),
+      marker: { color: colors[i % colors.length] },
+    }));
+
+    const layout: Partial<Layout> = {
+      barmode: "stack",
+      title: { text: "Topic distribution by subject", font: { size: 14 } },
+      height: 340,
+      margin: { t: 48, b: 90, l: 48, r: 16 },
+      paper_bgcolor: "rgba(0,0,0,0)",
+      plot_bgcolor: "rgba(0,0,0,0)",
+      font: { family: "inherit" },
+      showlegend: true,
+      legend: { x: 1.02, y: 1, orientation: "v" },
+    };
+    return { data, layout };
+  }, [stats]);
+
   return (
     <VizPanel title="Syllabus analytics (interactive charts)" testId="viz-analytics">
       <p className="viz-note">
-        Computed live from the syllabus map — topics, notes and access-tier
-        distribution across the whole hierarchy.
+        Computed live from the syllabus map — topics, notes, access-tier distribution,
+        subject depth, and topic distribution across the whole hierarchy.
       </p>
       <PlotlyChart data={barFigure.data} layout={barFigure.layout} />
       <PlotlyChart data={pieFigure.data} layout={pieFigure.layout} />
+      <PlotlyChart data={radarFigure.data} layout={radarFigure.layout} />
+      <PlotlyChart data={stackedFigure.data} layout={stackedFigure.layout} />
     </VizPanel>
   );
 }

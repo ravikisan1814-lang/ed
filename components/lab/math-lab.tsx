@@ -437,6 +437,288 @@ function MathSurfaces() {
 }
 
 // ---------------------------------------------------------------------------
+// Exp 5: Derivative Visualizer
+// ---------------------------------------------------------------------------
+
+function DerivativeViz() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [expression, setExpression] = useState("x^2");
+  const [dx, setDx] = useState(0.5);
+  const [hoverX, setHoverX] = useState<number | null>(null);
+
+  const draw = useCallback(() => {
+    const c = canvasRef.current;
+    if (!c) return;
+    const dpr = window.devicePixelRatio || 1;
+    const r = c.getBoundingClientRect();
+    c.width = r.width * dpr; c.height = r.height * dpr;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
+    ctx.scale(dpr, dpr);
+    const w = r.width, h = r.height, cx2 = w / 2, cy = h / 2, sc = 40;
+
+    ctx.fillStyle = "#0f172a"; ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = "#1e293b"; ctx.lineWidth = 1;
+    for (let x = cx2 % sc; x < w; x += sc) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = cy % sc; y < h; y += sc) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+    // Axes
+    ctx.strokeStyle = "#475569"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx2, 0); ctx.lineTo(cx2, h); ctx.stroke();
+
+    ctx.fillStyle = "#94a3b8"; ctx.font = "11px monospace";
+    ctx.fillText("x", w - 14, cy - 6); ctx.fillText("y", cx2 + 6, 14);
+
+    // Draw f(x)
+    ctx.strokeStyle = "#60a5fa"; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    let started = false;
+    for (let px = 0; px <= w; px++) {
+      const x = (px - cx2) / sc;
+      const y = cy - safeEval(expression, x) * sc;
+      if (isNaN(y) || !isFinite(y) || y < -1000 || y > h + 1000) { started = false; continue; }
+      if (!started) { ctx.moveTo(px, y); started = true; } else ctx.lineTo(px, y);
+    }
+    ctx.stroke();
+
+    // Draw f'(x) approximation (secant slope)
+    if (hoverX !== null) {
+      const x0 = (hoverX - cx2) / sc;
+      const y0 = safeEval(expression, x0);
+      const y1 = safeEval(expression, x0 + dx / sc * 40); // scale dx to canvas
+      const slope = (y1 - y0) / (dx / sc * 40);
+
+      // Tangent line
+      const tx = hoverX;
+      const ty = cy - y0 * sc;
+      ctx.strokeStyle = "#f87171"; ctx.lineWidth = 2;
+      ctx.beginPath();
+      const slopeX = 3; // pixels
+      ctx.moveTo(tx - slopeX, ty - slope * slopeX * sc);
+      ctx.lineTo(tx + slopeX, ty + slope * slopeX * sc);
+      ctx.stroke();
+
+      // Point
+      ctx.fillStyle = "#f87171";
+      ctx.beginPath(); ctx.arc(tx, ty, 5, 0, Math.PI * 2); ctx.fill();
+
+      // Info
+      ctx.fillStyle = "#f87171"; ctx.font = "11px monospace";
+      ctx.fillText(`f(${x0.toFixed(2)}) = ${y0.toFixed(3)}`, tx + 10, ty - 10);
+      ctx.fillText(`f' ≈ ${slope.toFixed(3)}`, tx + 10, ty + 5);
+    }
+  }, [expression, dx, hoverX]);
+
+  useEffect(() => {
+    draw();
+    const c = canvasRef.current;
+    if (!c) return;
+    const ro = new ResizeObserver(draw);
+    ro.observe(c);
+    return () => ro.disconnect();
+  }, [draw]);
+
+  return (
+    <div className="flex flex-col sm:flex-row gap-4 w-full">
+      <div className="flex-1 w-full">
+        <canvas ref={canvasRef} className="w-full rounded-lg border border-border"
+          style={{ height: "clamp(300px, 50vh, 600px)", width: "100%" }}
+          onMouseMove={(e) => setHoverX(e.clientX - e.currentTarget.getBoundingClientRect().left)}
+          onMouseLeave={() => setHoverX(null)}
+        />
+      </div>
+      <div className="w-full sm:w-52 flex flex-col gap-3">
+        <div className="flex flex-wrap gap-1.5">
+          {["x^2", "x^3", "sin(x)", "e^x", "ln(x)", "sqrt(x)"].map((fn) => (
+            <button key={fn} type="button" onClick={() => setExpression(fn)}
+              className={`text-xs px-2 py-1 rounded-md border transition-colors ${expression === fn ? "bg-blue-500/20 border-blue-500/50 text-blue-300" : "border-border bg-card text-muted-foreground hover:border-blue-500/30"}`}>
+              {fn}
+            </button>
+          ))}
+        </div>
+        <div>
+          <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">dx (step size)</span><span className="font-mono">{dx.toFixed(2)}</span></div>
+          <input type="range" min={0.1} max={2} step={0.1} value={dx} onChange={(e) => setDx(Number(e.target.value))} className="w-full accent-red-500" />
+        </div>
+        <MeaningPanel
+          title="Derivative as Slope"
+          meaning="The derivative f'(x) represents the instantaneous rate of change (slope) of f(x) at point x."
+          points={[`f'(x) = lim(dx→0) [f(x+dx)-f(x)]/dx`, "Geometrically: slope of tangent line", "Physically: velocity = derivative of position"]}
+          color="red"
+        />
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Exp 6: Matrix Transformations 3D
+// ---------------------------------------------------------------------------
+
+function MatrixTransform3D() {
+  const mountRef = useRef<HTMLDivElement>(null);
+  const [transform, setTransform] = useState<"rotate" | "scale" | "shear">("rotate");
+  const [angle, setAngle] = useState(45);
+  const [scaleFactor, setScaleFactor] = useState(1.5);
+  const [shearFactor, setShearFactor] = useState(0.5);
+
+  useEffect(() => {
+    const m = mountRef.current;
+    if (!m) return;
+    let C = false;
+
+    (async () => {
+      const T = await import("three") as typeof import("three");
+      const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
+      if (C || !m || m.clientWidth === 0) return;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0f172a);
+      const camera = new THREE.PerspectiveCamera(60, m.clientWidth / m.clientHeight, 0.1, 200);
+      camera.position.set(4, 3, 4);
+      camera.lookAt(0, 0, 0);
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(m.clientWidth, m.clientHeight);
+      m.appendChild(renderer.domElement);
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.3;
+      scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+      const dl = new THREE.DirectionalLight(0xffffff, 1.3);
+      dl.position.set(4, 6, 3);
+      scene.add(dl);
+      scene.add(new THREE.GridHelper(10, 20, 0x334155, 0x1e293b));
+
+      // Original cube (wireframe, gray)
+      const origGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+      const origEdges = new THREE.EdgesGeometry(origGeo);
+      const origLine = new THREE.LineSegments(origEdges, new THREE.LineBasicMaterial({ color: 0x475569, transparent: true, opacity: 0.5 }));
+      scene.add(origLine);
+
+      // Transformed cube (solid, colored)
+      const transGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+      const transMat = new THREE.MeshStandardMaterial({
+        color: 0x3b82f6,
+        transparent: true,
+        opacity: 0.6,
+        side: THREE.DoubleSide,
+        metalness: 0.2,
+        roughness: 0.5
+      });
+      const transMesh = new THREE.Mesh(transGeo, transMat);
+      scene.add(transMesh);
+
+      const transEdges = new THREE.EdgesGeometry(transGeo);
+      const transLine = new THREE.LineSegments(transEdges, new THREE.LineBasicMaterial({ color: 0x60a5fa }));
+      transMesh.add(transLine);
+
+      const clock = new THREE.Clock();
+
+      const updateTransform = () => {
+        const rad = (angle * Math.PI) / 180;
+        const s = scaleFactor;
+        const k = shearFactor;
+
+        if (transform === "rotate") {
+          transMesh.rotation.y = rad + clock.getElapsedTime() * 0.2;
+          transMesh.rotation.x = rad * 0.5;
+        } else if (transform === "scale") {
+          transMesh.scale.set(s, s, s);
+          transMesh.rotation.y = clock.getElapsedTime() * 0.2;
+        } else if (transform === "shear") {
+          transMesh.rotation.y = clock.getElapsedTime() * 0.2;
+          // Apply shear via matrix
+          const shearMatrix = new THREE.Matrix4();
+          shearMatrix.set(
+            1, k, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+          );
+          transMesh.applyMatrix4(shearMatrix);
+        }
+      };
+
+      const animate = () => {
+        requestAnimationFrame(animate);
+        if (C) return;
+        controls.update();
+        updateTransform();
+        renderer.render(scene, camera);
+      };
+      animate();
+
+      return () => {
+        C = true;
+        controls.dispose();
+        renderer.dispose();
+        if (renderer.domElement.parentNode === m) m.removeChild(renderer.domElement);
+      };
+    })();
+
+    return () => { C = true; };
+  }, [transform, angle, scaleFactor, shearFactor]);
+
+  return (
+    <div className="flex flex-col sm:flex-row gap-4 w-full">
+      <div ref={mountRef} className="flex-1 rounded-xl border border-border bg-card overflow-hidden" style={{ height: "clamp(300px, 50vh, 600px)", width: "100%" }} />
+      <div className="w-full sm:w-56 flex flex-col gap-3">
+        <div className="flex gap-1">
+          {(["rotate", "scale", "shear"] as const).map((t) => (
+            <button key={t} onClick={() => setTransform(t)}
+              className={`flex-1 px-2 py-1.5 rounded-md text-xs font-medium transition-all ${
+                transform === t
+                  ? "bg-blue-500 text-white"
+                  : "bg-card border border-border text-muted-foreground hover:border-blue-500/50"
+              }`}>
+              {t.charAt(0).toUpperCase() + t.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        {transform === "rotate" && (
+          <div>
+            <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">Rotation angle</span><span className="font-mono">{angle}°</span></div>
+            <input type="range" min={0} max={360} value={angle} onChange={(e) => setAngle(Number(e.target.value))} className="w-full accent-blue-500" />
+          </div>
+        )}
+
+        {transform === "scale" && (
+          <div>
+            <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">Scale factor</span><span className="font-mono">{scaleFactor.toFixed(1)}</span></div>
+            <input type="range" min={0.3} max={3} step={0.1} value={scaleFactor} onChange={(e) => setScaleFactor(Number(e.target.value))} className="w-full accent-blue-500" />
+          </div>
+        )}
+
+        {transform === "shear" && (
+          <div>
+            <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">Shear factor</span><span className="font-mono">{shearFactor.toFixed(2)}</span></div>
+            <input type="range" min={-1} max={1} step={0.05} value={shearFactor} onChange={(e) => setShearFactor(Number(e.target.value))} className="w-full accent-blue-500" />
+          </div>
+        )}
+
+        <MeaningPanel
+          title="Matrix Transformations"
+          meaning="Linear transformations can be represented by matrices. They transform points in space while preserving straight lines and the origin."
+          points={[
+            "Rotation: [cosθ -sinθ; sinθ cosθ]",
+            "Scale: [sx 0; 0 sy]",
+            "Shear: [1 k; 0 1]",
+            "Combined: multiply matrices",
+          ]}
+          color="blue"
+        />
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -458,6 +740,12 @@ export default function MathLab() {
       </LabCard>
       <LabCard title="Experiment 4: 3D Surfaces" subtitle="Parametric surfaces">
         <MathSurfaces />
+      </LabCard>
+      <LabCard title="Experiment 5: Derivative Visualizer" subtitle="Slope of tangent line">
+        <DerivativeViz />
+      </LabCard>
+      <LabCard title="Experiment 6: Matrix Transformations" subtitle="Rotate, Scale, Shear">
+        <MatrixTransform3D />
       </LabCard>
     </div>
   );

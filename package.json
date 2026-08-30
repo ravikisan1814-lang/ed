@@ -16,7 +16,8 @@
     "verify:migration": "node scripts/verify-migration.mjs",
     "bootstrap:owner": "node scripts/bootstrap-owner.mjs",
     "merge:variants": "node scripts/merge-content-variants.mjs",
-    "migrate:syllabus": "node scripts/migrate-syllabus.mjs"
+    "migrate:syllabus": "node scripts/migrate-syllabus.mjs",
+    "seed:notes": "node scripts/seedsyllabus-notes.mjs"
   },
   "dependencies": {
     "@microlink/react-json-view": "^1.31.28",

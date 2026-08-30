@@ -189,6 +189,249 @@ function ProjectileLab() {
   );
 }
 
+// ─── Wave Interference ───────────────────────────────────────────────────────
+
+function WaveInterferenceLab() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const animRef = useRef(0);
+  const [wavelength, setWavelength] = useState(1.5);
+  const [separation, setSeparation] = useState(2);
+  const [amplitude, setAmplitude] = useState(1);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    let cancelled = false;
+    let cleanup: (() => void) | null = null;
+
+    (async () => {
+      const THREE = await import("three");
+      const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
+      if (cancelled || !el || el.clientWidth === 0) return;
+      const rect = el.getBoundingClientRect();
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0f172a);
+      const camera = new THREE.PerspectiveCamera(50, rect.width / rect.height, 0.1, 1000);
+      camera.position.set(0, 8, 10);
+      camera.lookAt(0, 0, 0);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(rect.width, rect.height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      el.appendChild(renderer.domElement);
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      // Ground plane
+      const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(30, 30),
+        new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9 })
+      );
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.y = -0.1;
+      scene.add(ground);
+      scene.add(new THREE.GridHelper(30, 30, 0x334155, 0x1e293b));
+
+      // Two wave sources
+      const sourceGeo = new THREE.SphereGeometry(0.3, 16, 16);
+      const sourceMat1 = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 0.5 });
+      const sourceMat2 = new THREE.MeshStandardMaterial({ color: 0x3b82f6, emissive: 0x3b82f6, emissiveIntensity: 0.5 });
+      const source1 = new THREE.Mesh(sourceGeo, sourceMat1);
+      source1.position.set(-separation / 2, 0.3, 0);
+      scene.add(source1);
+      const source2 = new THREE.Mesh(sourceGeo, sourceMat2);
+      source2.position.set(separation / 2, 0.3, 0);
+      scene.add(source2);
+
+      // Wave surface
+      const segments = 100;
+      const waveGeo = new THREE.PlaneGeometry(20, 20, segments, segments);
+      const waveMat = new THREE.MeshStandardMaterial({
+        color: 0x38bdf8,
+        transparent: true,
+        opacity: 0.6,
+        side: THREE.DoubleSide,
+        wireframe: false
+      });
+      const waveMesh = new THREE.Mesh(waveGeo, waveMat);
+      waveMesh.rotation.x = -Math.PI / 2;
+      waveMesh.position.y = 0;
+      scene.add(waveMesh);
+
+      // Wireframe overlay
+      const wireGeo = new THREE.WireframeGeometry(new THREE.PlaneGeometry(20, 20, segments, segments));
+      const wireMat = new THREE.LineBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.3 });
+      const wireMesh = new THREE.LineSegments(wireGeo, wireMat);
+      wireMesh.rotation.x = -Math.PI / 2;
+      wireMesh.position.y = 0.01;
+      scene.add(wireMesh);
+
+      scene.add(new THREE.AmbientLight(0x94a3b8, 0.6));
+      const dl = new THREE.DirectionalLight(0xffffff, 0.9);
+      dl.position.set(5, 10, 5);
+      scene.add(dl);
+
+      const clock = new THREE.Clock();
+
+      const animate = () => {
+        animRef.current = requestAnimationFrame(animate);
+        if (cancelled) return;
+        controls?.update();
+        const t = clock.getElapsedTime();
+
+        // Update wave surface
+        const positions = waveMesh.geometry.attributes.position;
+        const count = positions.count;
+        for (let i = 0; i < count; i++) {
+          const x = positions.getX(i);
+          const z = positions.getZ(i);
+          const dist1 = Math.sqrt((x + separation / 2) ** 2 + z ** 2);
+          const dist2 = Math.sqrt((x - separation / 2) ** 2 + z ** 2);
+          const wave1 = (Math.sin(2 * Math.PI * (dist1 / wavelength) - t * 3) / (1 + dist1 * 0.1)) * amplitude;
+          const wave2 = (Math.sin(2 * Math.PI * (dist2 / wavelength) - t * 3) / (1 + dist2 * 0.1)) * amplitude;
+          positions.setY(i, wave1 + wave2);
+        }
+        positions.needsUpdate = true;
+        waveMesh.geometry.computeVertexNormals();
+
+        // Pulse sources
+        const scale = 1 + Math.sin(t * 4) * 0.2;
+        source1.scale.setScalar(scale);
+        source2.scale.setScalar(scale);
+
+        renderer.render(scene, camera);
+      };
+      animate();
+
+      const ro = new ResizeObserver(() => {
+        const r2 = el.getBoundingClientRect();
+        if (r2.width === 0 || r2.height === 0) return;
+        camera.aspect = r2.width / r2.height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(r2.width, r2.height);
+      });
+      ro.observe(el);
+
+      cleanup = () => {
+        cancelled = true;
+        cancelAnimationFrame(animRef.current);
+        ro.disconnect();
+        renderer.dispose();
+        el.removeChild(renderer.domElement);
+        controls.dispose();
+      };
+    })();
+
+    return () => { cancelled = true; cleanup?.(); };
+  }, [wavelength, separation, amplitude]);
+
+  return (
+    <LabCard title="Wave Interference 3D" subtitle="Two-source interference pattern">
+      <div className="grid lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 space-y-3">
+          <div ref={containerRef} style={{ height: "clamp(300px, 50vh, 600px)", width: "100%" }} className="rounded-lg overflow-hidden border border-border" />
+        </div>
+        <div className="space-y-3">
+          <CollapsibleControls label="Parameters" defaultOpen>
+            <div className="space-y-3">
+              <div>
+                <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">Wavelength</span><span className="font-mono">{wavelength.toFixed(1)} m</span></div>
+                <input type="range" min={0.5} max={3} step={0.1} value={wavelength} onChange={(e) => setWavelength(Number(e.target.value))} className="w-full accent-cyan-500" />
+              </div>
+              <div>
+                <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">Source separation</span><span className="font-mono">{separation.toFixed(1)} m</span></div>
+                <input type="range" min={0.5} max={4} step={0.1} value={separation} onChange={(e) => setSeparation(Number(e.target.value))} className="w-full accent-cyan-500" />
+              </div>
+              <div>
+                <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">Amplitude</span><span className="font-mono">{amplitude.toFixed(1)}</span></div>
+                <input type="range" min={0.3} max={2} step={0.1} value={amplitude} onChange={(e) => setAmplitude(Number(e.target.value))} className="w-full accent-cyan-500" />
+              </div>
+            </div>
+          </CollapsibleControls>
+          <MeaningPanel title="Wave Interference" meaning="When two waves meet, they interfere constructively (peaks align) or destructively (peak meets trough), creating an interference pattern." points={[`Constructive: path difference = nλ`, `Destructive: path difference = (n+½)λ`, `Double-slit experiment demonstrates this`]} color="cyan" />
+        </div>
+      </div>
+    </LabCard>
+  );
+}
+
+// ─── Electromagnetic Spectrum ────────────────────────────────────────────────
+
+function EMSpectrumLab() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [selectedRegion, setSelectedRegion] = useState("radio");
+
+  const regions = [
+    { name: "radio", color: "#ef4444", freq: "3 kHz - 300 GHz", wavelength: "> 1 mm", uses: "Broadcasting, radar, MRI" },
+    { name: "microwave", color: "#f97316", freq: "300 MHz - 300 GHz", wavelength: "1 mm - 1 m", uses: "Microwave ovens, Wi-Fi" },
+    { name: "infrared", color: "#eab308", freq: "300 GHz - 430 THz", wavelength: "700 nm - 1 mm", uses: "Remote controls, thermal imaging" },
+    { name: "visible", color: "#22c55e", freq: "430 - 750 THz", wavelength: "400 - 700 nm", uses: "Vision, photography" },
+    { name: "uv", color: "#3b82f6", freq: "750 THz - 30 PHz", wavelength: "10 - 400 nm", uses: "Sterilization, fluorescence" },
+    { name: "xray", color: "#8b5cf6", freq: "30 PHz - 30 EHz", wavelength: "0.01 - 10 nm", uses: "Medical imaging, security" },
+    { name: "gamma", color: "#ec4899", freq: "> 30 EHz", wavelength: "< 0.01 nm", uses: "Cancer treatment, astronomy" },
+  ];
+
+  const currentRegion = regions.find((r) => r.name === selectedRegion) ?? regions[0];
+
+  return (
+    <LabCard title="Electromagnetic Spectrum" subtitle="All forms of electromagnetic radiation">
+      <div className="grid lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 space-y-3">
+          <div ref={containerRef} className="rounded-lg overflow-hidden border border-border p-4">
+            {/* Spectrum visualization */}
+            <div className="flex h-32 rounded-lg overflow-hidden">
+              {regions.map((r) => (
+                <button
+                  key={r.name}
+                  onClick={() => setSelectedRegion(r.name)}
+                  className={`flex-1 transition-all hover:opacity-80 ${selectedRegion === r.name ? "ring-2 ring-white ring-offset-2 ring-offset-transparent" : "opacity-60"}`}
+                  style={{ backgroundColor: r.color }}
+                  title={r.name}
+                />
+              ))}
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground mt-2">
+              <span>Low Energy</span>
+              <span>High Energy</span>
+            </div>
+
+            {/* Selected region details */}
+            <div className="mt-4 p-3 rounded-lg" style={{ backgroundColor: `${currentRegion.color}20`, border: `1px solid ${currentRegion.color}40` }}>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: currentRegion.color }} />
+                <h4 className="font-semibold capitalize">{currentRegion.name}</h4>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div><span className="text-muted-foreground">Frequency:</span> <span className="font-mono">{currentRegion.freq}</span></div>
+                <div><span className="text-muted-foreground">Wavelength:</span> <span className="font-mono">{currentRegion.wavelength}</span></div>
+                <div className="col-span-2"><span className="text-muted-foreground">Uses:</span> {currentRegion.uses}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="space-y-3">
+          <MeaningPanel
+            title="Electromagnetic Spectrum"
+            meaning="All electromagnetic waves travel at the speed of light (c = 3×10⁸ m/s). They differ in frequency and wavelength."
+            points={[`c = f × λ`, `Energy = hf (where h = 6.626×10⁻³⁴ J·s)`, `Higher frequency = higher energy`, `All are transverse waves`]}
+            color="amber"
+          />
+          <CollapsibleControls label="Spectrum Order (low to high energy)">
+            <ul className="text-xs space-y-1">
+              {regions.map((r) => (
+                <li key={r.name} className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: r.color }} />
+                  <span className="capitalize">{r.name}</span>
+                </li>
+              ))}
+            </ul>
+          </CollapsibleControls>
+        </div>
+      </div>
+    </LabCard>
+  );
+}
+
 // ─── Circular Motion 3D ──────────────────────────────────────────────────────
 
 function CircularMotionLab() {
@@ -463,16 +706,20 @@ function SHMLab() {
   );
 }
 
+// ─── Main Export ─────────────────────────────────────────────────────────────
+
 export default function PhysicsLab() {
   return (
     <div className="flex flex-col gap-6 w-full">
       <div className="flex flex-col gap-2">
         <h2 className="text-xl font-semibold">Physics Lab</h2>
-        <p className="text-sm text-muted-foreground">Interactive simulations of classical mechanics phenomena.</p>
+        <p className="text-sm text-muted-foreground">Interactive simulations of classical mechanics and wave phenomena.</p>
       </div>
       <ProjectileLab />
       <CircularMotionLab />
       <SHMLab />
+      <WaveInterferenceLab />
+      <EMSpectrumLab />
     </div>
   );
 }
