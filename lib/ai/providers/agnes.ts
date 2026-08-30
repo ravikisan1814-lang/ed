@@ -2,7 +2,7 @@ import type { AIGenerateRequest, AIGenerateResponse, AIProvider } from "../types
 import { AIProviderConfigError, AIProviderError } from "../errors";
 
 const AGNES_ENDPOINT =
-  process.env.AGNES_API_URL ?? "https://api.sapiens.ai/v1/chat/completions";
+  process.env.AGNES_API_URL ?? "https://api.agnes-ai.com/api/v1/chat/completions";
 const REQUEST_TIMEOUT_MS = 60_000;
 
 interface AgnesResponse {
