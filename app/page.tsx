@@ -15,7 +15,7 @@ export default function Home() {
         <NatureInspiration />
         <HomeDashboard view={view} onChangeView={setView} />
       </div>
-      <SiteFooter />
+      {view === "home" && <SiteFooter />}
     </>
   );
 }

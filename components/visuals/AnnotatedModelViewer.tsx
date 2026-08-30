@@ -113,7 +113,7 @@ function ResponsiveCamera() {
     const handleResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      camera.aspect = width / height;
+      (camera as any).aspect = width / height;
       camera.updateProjectionMatrix();
       prevWidth.current = width;
     };

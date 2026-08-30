@@ -1,12 +1,23 @@
 # AGENT STATUS
 
-Last updated: 2026-08-29 (NEB Grade 11 syllabus seeded: Physics, Chemistry, Biology)
+Last updated: 2026-08-30 (Content ingestion UI built — /ingest page for auto-classifying and filing notes)
 
-### Status: Syllabus seeded — 53 chapters across 3 subjects, content under development
+### Status: Syllabus fully seeded + Content Ingestion UI ready
+
+### New files this session
+| File | Purpose |
+| --- | --- |
+| `components/ContentIngest.tsx` | Main ingestion UI — cascading selectors, paste textarea, preview + submit |
+| `app/ingest/page.tsx` | Standalone owner-only page at `/ingest` |
+| `app/api/admin/ingest/preview/route.ts` | Classification preview API (returns placement without inserting) |
 
 ### Tasks (this session)
 | Task | Status |
 | --- | --- |
+| Update lib/syllabus.ts with detailed NEB Class 11 syllabi (Physics 26, Chemistry 17, Biology 10, Mathematics 15) | Done |
+| Update scripts/migrate-syllabus.mjs with full chapter→topic hierarchy + Mathematics | Done |
+| Run migration against live Supabase: 67 chapters, 314 topics, 314 content items | Done |
+| TypeScript + ESLint + Vitest verification | Done |
 | BackButton: arrow-in-box only, no text label | Done |
 | CSS: back button removed from fixed position, clean box style | Done |
 | All page usages updated (label prop removed) | Done |

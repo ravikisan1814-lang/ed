@@ -1,4 +1,5 @@
 import CatalogSidebar from "@/components/CatalogSidebar";
+import SiteHeader from "@/components/SiteHeader";
 
 export const metadata = {
   title: "Catalog — EduPlatform",
@@ -12,9 +13,12 @@ export default function CatalogLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="catalog-layout">
-      <CatalogSidebar />
-      <main className="catalog-main">{children}</main>
-    </div>
+    <>
+      <SiteHeader />
+      <div className="catalog-layout">
+        <CatalogSidebar />
+        <main className="catalog-main">{children}</main>
+      </div>
+    </>
   );
 }

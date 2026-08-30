@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ACCESS_LEVEL_LABELS } from "@/lib/types";
+import Link from "next/link";
 
 interface AdminUser {
   id: string;
@@ -34,6 +35,7 @@ export default function AdminPanel() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"members" | "ingest">("members");
 
   const loadUsers = useCallback(async () => {
     try {
@@ -102,11 +104,25 @@ export default function AdminPanel() {
       <div className="admin-head">
         <h1>Owner dashboard</h1>
         <p>
-          Approve new accounts, assign access tiers, and monitor platform
-          activity. The first owner account must be set directly in Supabase.
-          New signups stay &quot;Pending approval&quot; until you approve them
-          here.
+          Manage members, ingest notes, and monitor platform activity. The first owner account must be set directly in Supabase.
         </p>
+      </div>
+
+      {/* Tab nav */}
+      <div className="admin-tabs">
+        <button
+          type="button"
+          className={`admin-tab${activeTab === "members" ? " admin-tab-active" : ""}`}
+          onClick={() => setActiveTab("members")}
+        >
+          Members
+        </button>
+        <Link
+          href="/ingest"
+          className={`admin-tab${activeTab === "ingest" ? " admin-tab-active" : ""}`}
+        >
+          Ingest Notes
+        </Link>
       </div>
 
       {error && (
@@ -115,126 +131,130 @@ export default function AdminPanel() {
         </p>
       )}
 
-      {stats && (
-        <div className="admin-stats">
-          <div className="admin-stat-card">
-            <span className="admin-stat-value">{stats.users.total}</span>
-            <span className="admin-stat-label">Total users</span>
-          </div>
-          <div className="admin-stat-card">
-            <span className="admin-stat-value admin-stat-pending">
-              {stats.users.pending}
-            </span>
-            <span className="admin-stat-label">Pending approval</span>
-          </div>
-          <div className="admin-stat-card">
-            <span className="admin-stat-value admin-stat-approved">
-              {stats.users.approved}
-            </span>
-            <span className="admin-stat-label">Approved</span>
-          </div>
-          <div className="admin-stat-card">
-            <span className="admin-stat-value">{stats.content.total}</span>
-            <span className="admin-stat-label">Content items</span>
-          </div>
-        </div>
-      )}
+      {activeTab === "members" && (
+        <>
+          {stats && (
+            <div className="admin-stats">
+              <div className="admin-stat-card">
+                <span className="admin-stat-value">{stats.users.total}</span>
+                <span className="admin-stat-label">Total users</span>
+              </div>
+              <div className="admin-stat-card">
+                <span className="admin-stat-value admin-stat-pending">
+                  {stats.users.pending}
+                </span>
+                <span className="admin-stat-label">Pending approval</span>
+              </div>
+              <div className="admin-stat-card">
+                <span className="admin-stat-value admin-stat-approved">
+                  {stats.users.approved}
+                </span>
+                <span className="admin-stat-label">Approved</span>
+              </div>
+              <div className="admin-stat-card">
+                <span className="admin-stat-value">{stats.content.total}</span>
+                <span className="admin-stat-label">Content items</span>
+              </div>
+            </div>
+          )}
 
-      <div className="admin-section">
-        <h2>Members</h2>
-        {users === null ? (
-          <p className="admin-loading">Loading members…</p>
-        ) : users.length === 0 ? (
-          <div className="under-development">
-            <span className="ud-icon">🔮</span>
-            <span>Under development — will be added in future update</span>
+          <div className="admin-section">
+            <h2>Members</h2>
+            {users === null ? (
+              <p className="admin-loading">Loading members…</p>
+            ) : users.length === 0 ? (
+              <div className="under-development">
+                <span className="ud-icon">🔮</span>
+                <span>Under development — will be added in future update</span>
+              </div>
+            ) : (
+              <div className="admin-table-wrap">
+                <table className="admin-table" data-testid="admin-users-table">
+                  <thead>
+                    <tr>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Tier (access)</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((user) => (
+                      <tr key={user.id} data-testid={`admin-user-${user.email ?? user.id}`}>
+                        <td className="admin-email">{user.email ?? "—"}</td>
+                        <td>
+                          <span
+                            className={`admin-status admin-status-${user.status}`}
+                          >
+                            {STATUS_LABELS[user.status] ?? user.status}
+                          </span>
+                        </td>
+                        <td>
+                          <select
+                            className="admin-tier-select"
+                            value={String(user.access_level)}
+                            disabled={busyId === user.id}
+                            aria-label={`Tier for ${user.email ?? user.id}`}
+                            onChange={(event) =>
+                              void patchUser(user.id, {
+                                access_level: Number(event.target.value),
+                              })
+                            }
+                          >
+                            {([1, 2, 3, 4] as const).map((level) => (
+                              <option key={level} value={String(level)}>
+                                {ACCESS_LEVEL_LABELS[level]} (level {level})
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="admin-actions">
+                          {user.status !== "approved" && (
+                            <button
+                              type="button"
+                              className="btn btn-primary admin-btn"
+                              disabled={busyId === user.id}
+                              onClick={() =>
+                                void patchUser(user.id, { status: "approved" })
+                              }
+                            >
+                              Approve
+                            </button>
+                          )}
+                          {user.status === "approved" && (
+                            <button
+                              type="button"
+                              className="btn btn-secondary admin-btn"
+                              disabled={busyId === user.id}
+                              onClick={() =>
+                                void patchUser(user.id, { status: "pending" })
+                              }
+                            >
+                              Hold
+                            </button>
+                          )}
+                          {user.status !== "rejected" && (
+                            <button
+                              type="button"
+                              className="btn btn-secondary admin-btn admin-btn-danger"
+                              disabled={busyId === user.id}
+                              onClick={() =>
+                                void patchUser(user.id, { status: "rejected" })
+                              }
+                            >
+                              Reject
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="admin-table-wrap">
-            <table className="admin-table" data-testid="admin-users-table">
-              <thead>
-                <tr>
-                  <th>Email</th>
-                  <th>Status</th>
-                  <th>Tier (access)</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id} data-testid={`admin-user-${user.email ?? user.id}`}>
-                    <td className="admin-email">{user.email ?? "—"}</td>
-                    <td>
-                      <span
-                        className={`admin-status admin-status-${user.status}`}
-                      >
-                        {STATUS_LABELS[user.status] ?? user.status}
-                      </span>
-                    </td>
-                    <td>
-                      <select
-                        className="admin-tier-select"
-                        value={String(user.access_level)}
-                        disabled={busyId === user.id}
-                        aria-label={`Tier for ${user.email ?? user.id}`}
-                        onChange={(event) =>
-                          void patchUser(user.id, {
-                            access_level: Number(event.target.value),
-                          })
-                        }
-                      >
-                        {([1, 2, 3, 4] as const).map((level) => (
-                          <option key={level} value={String(level)}>
-                            {ACCESS_LEVEL_LABELS[level]} (level {level})
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="admin-actions">
-                      {user.status !== "approved" && (
-                        <button
-                          type="button"
-                          className="btn btn-primary admin-btn"
-                          disabled={busyId === user.id}
-                          onClick={() =>
-                            void patchUser(user.id, { status: "approved" })
-                          }
-                        >
-                          Approve
-                        </button>
-                      )}
-                      {user.status === "approved" && (
-                        <button
-                          type="button"
-                          className="btn btn-secondary admin-btn"
-                          disabled={busyId === user.id}
-                          onClick={() =>
-                            void patchUser(user.id, { status: "pending" })
-                          }
-                        >
-                          Hold
-                        </button>
-                      )}
-                      {user.status !== "rejected" && (
-                        <button
-                          type="button"
-                          className="btn btn-secondary admin-btn admin-btn-danger"
-                          disabled={busyId === user.id}
-                          onClick={() =>
-                            void patchUser(user.id, { status: "rejected" })
-                          }
-                        >
-                          Reject
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 }

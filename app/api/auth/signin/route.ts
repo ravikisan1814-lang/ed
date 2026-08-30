@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
+const OWNER_EMAIL = "ravikisan1814@gmail.com";
+
 export async function POST(request: NextRequest) {
   let body: { email?: unknown; password?: unknown };
   try {
@@ -25,6 +27,32 @@ export async function POST(request: NextRequest) {
       { error: error?.message ?? "Sign-in failed" },
       { status: 401 }
     );
+  }
+
+  const isOwner = email === OWNER_EMAIL;
+
+  // Auto-approve owner on first successful signin (handles accounts created before this fix)
+  if (isOwner) {
+    const { data: existingProfile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", data.user.id)
+      .maybeSingle();
+
+    if (existingProfile) {
+      await supabase
+        .from("profiles")
+        .update({ access_level: 1, status: "approved", role: "owner" })
+        .eq("id", data.user.id);
+    } else {
+      await supabase.from("profiles").insert({
+        id: data.user.id,
+        email: data.user.email ?? "",
+        access_level: 1,
+        status: "approved",
+        role: "owner",
+      });
+    }
   }
 
   const { data: profile } = await supabase

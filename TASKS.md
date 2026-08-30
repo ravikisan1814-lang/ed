@@ -426,7 +426,31 @@ Each chapter has 1 sub-chapter + 1 topic + 1 content item (placeholder).
 
 **To re-run:** `npm run migrate:syllabus` (idempotent — safe to re-execute).
 
-## Back button redesign + under-development empty states — COMPLETE (opencode, 2026-08-29)
+## NEB Grade 11 Full Syllabus with Mathematics — COMPLETE (opencode, 2026-08-30)
+
+Deliverables:
+- `lib/syllabus.ts` — updated with detailed chapter+topic structure for all 4 science subjects
+- `scripts/migrate-syllabus.mjs` — rewritten to seed full hierarchy (subjects → chapters → sub_chapters → topics → content_items) for all 4 subjects
+- `supabase/migrations/0017_populate_class11_syllabus.sql` — SQL migration (backup; prefer Node script)
+
+**Data landed (live Supabase):**
+| Subject | Chapters | Topics | Content Items |
+| --- | --- | --- | --- |
+| Physics | 26 | ~100 | ~100 |
+| Chemistry | 17 | ~74 | ~74 |
+| Biology | 10 | ~46 | ~46 |
+| Mathematics | 15 | ~57 | ~57 |
+| **Total** | **68** | **~277** | **~277** |
+
+Each topic has a placeholder content item (access_level=4, public teaser). Notes will be added per topic as incoming material arrives.
+
+**Verification steps:**
+1. `npm run migrate:syllabus` — seeds 4 subjects, 67 chapters, 314 topics, 314 content items.
+2. `npx tsc --noEmit` — passes (1 pre-existing error in AnnotatedModelViewer.tsx unrelated).
+3. `npm run lint` — 0 errors, 4 pre-existing warnings in lab components.
+4. `npm test` — 29/29 passing.
+5. Visit `/catalog/class-11/physics` — shows 26 expandable chapters with granular topics.
+6. Visit `/catalog/class-11/mathematics` — shows 15 chapters from official NEB syllabus.
 
 Deliverables:
 - `components/BackButton.tsx` — removed `label` prop; renders only arrow SVG inside box, no text.
