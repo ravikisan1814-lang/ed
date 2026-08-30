@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase-admin";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,11 @@ async function requireOwner() {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  const { data: profile } = await supabase
+  // Use admin client to bypass RLS when checking owner status.
+  // The anon client cannot read profiles until access_level=1 is set,
+  // creating a circular dependency right after owner approval.
+  const admin = createAdminClient();
+  const { data: profile } = await admin
     .from("profiles")
     .select("access_level, status")
     .eq("id", user.id)
@@ -22,19 +27,20 @@ async function requireOwner() {
     return NextResponse.json({ error: "Owner only" }, { status: 403 });
   }
 
-  return { supabase };
+  return { supabase, admin };
 }
 
 export async function GET() {
   const ctx = await requireOwner();
   if (ctx instanceof NextResponse) return ctx;
 
+  // Use admin client for reads — bypasses RLS entirely (owner-only route)
   const [{ count: totalUsers }, { count: pendingUsers }, { count: approvedUsers }, { count: totalContent }] =
     await Promise.all([
-      ctx.supabase.from("profiles").select("*", { count: "exact", head: true }),
-      ctx.supabase.from("profiles").select("*", { count: "exact", head: true }).eq("status", "pending"),
-      ctx.supabase.from("profiles").select("*", { count: "exact", head: true }).eq("status", "approved"),
-      ctx.supabase.from("content_items").select("*", { count: "exact", head: true }),
+      ctx.admin.from("profiles").select("*", { count: "exact", head: true }),
+      ctx.admin.from("profiles").select("*", { count: "exact", head: true }).eq("status", "pending"),
+      ctx.admin.from("profiles").select("*", { count: "exact", head: true }).eq("status", "approved"),
+      ctx.admin.from("content_items").select("*", { count: "exact", head: true }),
     ]);
 
   return NextResponse.json({

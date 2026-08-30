@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase-admin";
 import { validateAccessLevel } from "@/lib/access";
 
 export const dynamic = "force-dynamic";
@@ -30,8 +31,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 
-  // Owner-only write gate — must be level 1 AND approved
-  const { data: profile } = await supabase
+  // Owner-only write gate — must be level 1 AND approved.
+  // Use admin client to bypass RLS (same circular-dependency fix as signin).
+  const admin = createAdminClient();
+  const { data: profile } = await admin
     .from("profiles")
     .select("access_level, status")
     .eq("id", user.id)

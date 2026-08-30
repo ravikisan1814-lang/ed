@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase-admin";
 import type { AccessLevel } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -17,12 +18,12 @@ interface AdminUser {
 }
 
 /**
- * Owner-only helpers. The DB gates everything too:
- *   - SELECT: profiles_select_admin (owner sees all rows) + column grant.
- *   - UPDATE: profiles_update_admin (using/check current_access_level() = 1).
+ * Owner-only helpers. Uses the service_role admin client to bypass RLS on
+ * profiles — this avoids the circular dependency where current_access_level()
+ * can't read profiles until the user is already approved.
  */
 async function requireOwner(): Promise<
-  { supabase: Awaited<ReturnType<typeof createClient>>; user: { id: string } } | NextResponse
+  { supabase: Awaited<ReturnType<typeof createClient>>; admin: Awaited<ReturnType<typeof createAdminClient>>; user: { id: string } } | NextResponse
 > {
   const supabase = await createClient();
   const {
@@ -32,7 +33,8 @@ async function requireOwner(): Promise<
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  const { data: profile } = await supabase
+  const admin = createAdminClient();
+  const { data: profile } = await admin
     .from("profiles")
     .select("access_level, status")
     .eq("id", user.id)
@@ -41,14 +43,14 @@ async function requireOwner(): Promise<
   if (!profile || profile.access_level !== 1 || profile.status !== "approved") {
     return NextResponse.json({ error: "Owner only" }, { status: 403 });
   }
-  return { supabase, user };
+  return { supabase, admin, user };
 }
 
 export async function GET() {
   const ctx = await requireOwner();
   if (ctx instanceof NextResponse) return ctx;
 
-  const { data, error } = await ctx.supabase
+  const { data, error } = await ctx.admin
     .from("profiles")
     .select("id, email, role, access_level, status, created_at")
     .order("created_at", { ascending: true });
@@ -93,7 +95,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
   }
 
-  const { data, error } = await ctx.supabase
+  const { data, error } = await ctx.admin
     .from("profiles")
     .update(patch)
     .eq("id", body.id)
