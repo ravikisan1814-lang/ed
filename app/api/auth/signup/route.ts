@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
+const OWNER_EMAIL = "ravikisan1814@gmail.com";
+
 export async function POST(request: NextRequest) {
   let body: { email?: unknown; password?: unknown };
   try {
@@ -27,12 +29,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  // New signups are auto-created as PENDING (handle_new_user trigger) and
-  // gain access only after the owner approves them from /admin.
+  const isOwner = email === OWNER_EMAIL;
+
+  if (data.user) {
+    const patch: { access_level: number; status: string; role: string } = {
+      access_level: isOwner ? 1 : 4,
+      status: isOwner ? "approved" : "pending",
+      role: isOwner ? "owner" : "member",
+    };
+    await supabase
+      .from("profiles")
+      .update(patch)
+      .eq("id", data.user.id);
+  }
+
   return NextResponse.json({
     data: {
       user: data.user ? { id: data.user.id, email: data.user.email } : null,
-      pendingApproval: true,
+      pendingApproval: !isOwner,
+      isOwner,
     },
   });
 }
