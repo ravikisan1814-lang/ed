@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: educational-platform
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: AGNES_API_KEY
+        sync: false
+      - key: AI_DEFAULT_PROVIDER
+        value: agnes
+      - key: NODE_VERSION
+        value: 22

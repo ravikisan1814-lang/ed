@@ -1,5 +1,13 @@
 {
   "framework": "nextjs",
   "buildCommand": "npm run build",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "vercel",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "vercel",
+    "SUPABASE_SERVICE_ROLE_KEY": "vercel",
+    "AGNES_API_KEY": "vercel",
+    "AI_DEFAULT_PROVIDER": "agnes"
+  }
 }
