@@ -1,35 +1,23 @@
-import type { AIGenerateRequest, AIGenerateResponse, AIProvider, AIChatMessage } from "../types";
+import type { AIGenerateRequest, AIGenerateResponse, AIProvider } from "../types";
 import { AIProviderConfigError, AIProviderError } from "../errors";
 
-const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
+const GEMINI_ENDPOINT =
+  "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 const REQUEST_TIMEOUT_MS = 60_000;
 
-interface GeminiGenerateResponse {
-  candidates?: Array<{
-    content?: { parts?: Array<{ text?: string }> };
-  }>;
-  usageMetadata?: {
-    promptTokenCount?: number;
-    completionTokenCount?: number;
-    totalTokenCount?: number;
+interface GeminiResponse {
+  choices?: Array<{ message?: { content?: string } }>;
+  usage?: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
   };
   error?: { message?: string };
 }
 
-function toGeminiMessages(messages: AIChatMessage[]) {
-  const systemMessages = messages.filter((m) => m.role === "system");
-  const contents = messages
-    .filter((m) => m.role !== "system")
-    .map((m) => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content }],
-    }));
-  return { systemMessages, contents };
-}
-
 export const geminiProvider: AIProvider = {
   name: "gemini",
-  defaultModel: "gemini-2.5-pro",
+  defaultModel: "gemini-2.0-flash",
 
   async generate(request: AIGenerateRequest): Promise<AIGenerateResponse> {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -38,24 +26,19 @@ export const geminiProvider: AIProvider = {
     }
 
     const model = request.model ?? this.defaultModel;
-    const { systemMessages, contents } = toGeminiMessages(request.messages);
 
-    const body: Record<string, unknown> = { contents };
-    if (systemMessages.length > 0) {
-      body.systemInstruction = {
-        parts: systemMessages.map((m) => ({ text: m.content })),
-      };
-    }
-    const generationConfig: Record<string, unknown> = {};
-    if (request.temperature !== undefined) generationConfig.temperature = request.temperature;
-    if (request.maxTokens !== undefined) generationConfig.maxOutputTokens = request.maxTokens;
-    if (Object.keys(generationConfig).length > 0) {
-      body.generationConfig = generationConfig;
-    }
+    const body: Record<string, unknown> = {
+      model,
+      messages: request.messages,
+    };
+    if (request.temperature !== undefined) body.temperature = request.temperature;
+    if (request.maxTokens !== undefined) body.max_tokens = request.maxTokens;
 
-    const res = await fetch(`${GEMINI_ENDPOINT}/${model}:generateContent?key=${apiKey}`, {
+    const res = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
@@ -65,22 +48,19 @@ export const geminiProvider: AIProvider = {
       throw new AIProviderError(`Gemini API error (${res.status}): ${detail}`);
     }
 
-    const data = (await res.json()) as GeminiGenerateResponse;
+    const data = (await res.json()) as GeminiResponse;
     if (data.error?.message) {
       throw new AIProviderError(`Gemini API error: ${data.error.message}`);
     }
 
-    const content =
-      data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
-
     return {
       provider: "gemini",
       model,
-      content,
+      content: data.choices?.[0]?.message?.content ?? "",
       usage: {
-        promptTokens: data.usageMetadata?.promptTokenCount ?? 0,
-        completionTokens: data.usageMetadata?.completionTokenCount ?? 0,
-        totalTokens: data.usageMetadata?.totalTokenCount ?? 0,
+        promptTokens: data.usage?.prompt_tokens ?? 0,
+        completionTokens: data.usage?.completion_tokens ?? 0,
+        totalTokens: data.usage?.total_tokens ?? 0,
       },
     };
   },
