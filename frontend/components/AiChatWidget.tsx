@@ -9,8 +9,6 @@ interface ChatMessage {
   content: string;
 }
 
-const VISITOR_LIMIT = Infinity;
-
 function cleanAiText(text: string): string {
   const links: string[] = [];
   let preserved = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match) => {

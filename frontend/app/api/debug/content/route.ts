@@ -6,9 +6,14 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
     const { data, error } = await supabase
       .from("content_items")
-      .select("id, title, public_teaser, locked_payload, access_level")
+      .select("id, title, public_teaser, access_level")
       .limit(5);
 
     if (error) {
@@ -22,7 +27,6 @@ export async function GET() {
         title: item.title,
         access_level: item.access_level,
         teaser_preview: item.public_teaser?.slice(0, 200) ?? "",
-        payload_preview: item.locked_payload?.slice(0, 200) ?? "",
       })),
     });
   } catch (err) {

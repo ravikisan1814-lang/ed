@@ -1,37 +1,46 @@
-# dependencies
-/node_modules
+# Node
+node_modules/
+.pnp
+.pnp.js
 
-# next.js
-/.next/
-/out/
+# Testing
+coverage/
+*.lcov
 
-# production
-/build
+# Next.js
+.next/
+out/
 
-# misc
+# Production
+build/
+dist/
+
+# Misc
 .DS_Store
-*.pem
+*.tsbuildinfo
+next-env.d.ts
 
-# debug
+# Env files (never commit real values)
+.env
+.env.local
+.env.*.local
+
+# Debugger
+.vscode/.hidden
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# env files
-.env
-.env*.local
+# Playwright
+playwright-report/
+playwright/.cache/
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# playwright
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-
-# temp
-next-*.log
-
+# Aider
 .aider*
+aider.input.history
+aider.chat.history.md
+aider.tags.cache.*
+
+# Vercel
+.vercel

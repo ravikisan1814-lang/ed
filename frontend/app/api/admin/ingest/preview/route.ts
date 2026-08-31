@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase-admin";
 import { validateAccessLevel } from "@/lib/access";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +23,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 
-  const { data: profile } = await supabase
+  // Use admin client to bypass RLS when checking owner status.
+  // The anon client cannot read profiles until access_level=1 is set,
+  // creating a circular dependency right after owner approval.
+  const admin = createAdminClient();
+  const { data: profile } = await admin
     .from("profiles")
     .select("access_level, status")
     .eq("id", user.id)
@@ -61,29 +66,12 @@ export async function POST(request: Request) {
 
   // Keyword rules (mirrors lib/ingestion.ts KEYWORD_RULES)
   const KEYWORD_RULES = [
-    { keyword: /vector/i, subjectSlug: "physics", chapterSlug: "vectors", topicSlug: "vector-addition" },
-    { keyword: /mirror|concave|convex|spherical/i, subjectSlug: "physics", chapterSlug: "reflection-curved-mirrors", topicSlug: "mirror-formula" },
-    { keyword: /heat|thermodynamic|calorimet/i, subjectSlug: "physics", chapterSlug: "heat-thermodynamics", topicSlug: "thermo-topic2" },
-    { keyword: /mole|stoichiometr|avogadro/i, subjectSlug: "chemistry", chapterSlug: "stoichiometry", topicSlug: "mole-topic" },
-    { keyword: /atom|quantum|electron|orbital/i, subjectSlug: "chemistry", chapterSlug: "atomic-structure", topicSlug: "quantum-topics" },
-    { keyword: /bond|vsepr|hybridiz/i, subjectSlug: "chemistry", chapterSlug: "chemical-bonding", topicSlug: "vsepr-shapes" },
-    { keyword: /gas law|boyle|charles|ideal gas/i, subjectSlug: "chemistry", chapterSlug: "states-of-matter", topicSlug: "gas-laws-topic" },
-    { keyword: /set|venn|subset|cardinality/i, subjectSlug: "mathematics", chapterSlug: "set-theory", topicSlug: "set-theory-topic" },
-    { keyword: /matrix|determinant|transpose/i, subjectSlug: "mathematics", chapterSlug: "matrices", topicSlug: "matrices-topic" },
-    { keyword: /binomial|expansion|coefficient/i, subjectSlug: "mathematics", chapterSlug: "binomial-theorem", topicSlug: "binomial-topic" },
-    { keyword: /trigonometr|sin|cos|tan|inverse trig/i, subjectSlug: "mathematics", chapterSlug: "trigonometry", topicSlug: "trigonometry-topic" },
-    { keyword: /logarithm|log|exponential/i, subjectSlug: "mathematics", chapterSlug: "logarithm", topicSlug: "logarithm-topic" },
-    { keyword: /line|slope|equation of line/i, subjectSlug: "mathematics", chapterSlug: "straight-line", topicSlug: "straight-line-topic" },
-    { keyword: /limit|continuity|derivative/i, subjectSlug: "mathematics", chapterSlug: "limits", topicSlug: "limits-topic" },
-    { keyword: /differentiation|chain rule|implicit/i, subjectSlug: "mathematics", chapterSlug: "differentiation", topicSlug: "differentiation-topic" },
-    { keyword: /statistics|mean|median|mode|variance/i, subjectSlug: "mathematics", chapterSlug: "statistics", topicSlug: "statistics-topic" },
-    { keyword: /cell|mitosis|meiosis|division/i, subjectSlug: "biology", chapterSlug: "biomolecules-cell-biology", topicSlug: "cell-division-topic" },
-    { keyword: /fungi|lichen|algae|moss|fern/i, subjectSlug: "biology", chapterSlug: "floral-diversity", topicSlug: "plant-diversity-topic" },
-    { keyword: /virus|bacteria|microbe/i, subjectSlug: "biology", chapterSlug: "introductory-microbiology", topicSlug: "monera-bacteria" },
-    { keyword: /ecosystem|food chain|cycle|pollution/i, subjectSlug: "biology", chapterSlug: "ecology", topicSlug: "ecosystem-topic" },
-    { keyword: /evolution|darwin|origin life/i, subjectSlug: "biology", chapterSlug: "evolutionary-biology", topicSlug: "evolution-topic" },
-    { keyword: /animal|worm|frog|phylum/i, subjectSlug: "biology", chapterSlug: "faunal-diversity", topicSlug: "animal-diversity-topic" },
-    { keyword: /conservation|biodiversity|national park/i, subjectSlug: "biology", chapterSlug: "conservation-biology", topicSlug: "conservation-topic" },
+    { keyword: /vector/i, subjectSlug: "physics", chapterSlug: "mechanics", subChapterSlug: "vectors", topicSlug: "vector-addition" },
+    { keyword: /mirror|concave|convex|spherical/i, subjectSlug: "physics", chapterSlug: "optics", subChapterSlug: "reflection-curved-surfaces", topicSlug: "mirror-formula" },
+    { keyword: /heat|thermodynamic|calorimet/i, subjectSlug: "physics", chapterSlug: "heat", subChapterSlug: "thermodynamics" },
+    { keyword: /constitution|fundamental right|article 18|article18/i, subjectSlug: "governance-public-admin", chapterSlug: "constitutional-law", subChapterSlug: "fundamental-rights", topicSlug: "right-to-equality" },
+    { keyword: /koshi|karnali|gandaki|saptakoshi|river system/i, subjectSlug: "nepal-geography", chapterSlug: "physical-geography", subChapterSlug: "rivers-of-nepal" },
+    { keyword: /gandaki|narayani|trishuli/i, subjectSlug: "nepal-geography", chapterSlug: "physical-geography", subChapterSlug: "rivers-of-nepal", topicSlug: "gandaki-river-system" },
   ];
 
   const rule = KEYWORD_RULES.find((r) => r.keyword.test(searchable));
@@ -94,14 +82,19 @@ export async function POST(request: Request) {
       .flatMap((g) => g.subjects ?? [])
       .find((s: any) => s.slug === rule.subjectSlug);
     const chapter = (subject?.chapters ?? []).find((c: any) => c.slug === rule.chapterSlug);
-    const topic = (chapter?.topics ?? []).find((t: any) => t.slug === rule.topicSlug);
+    const subChapter = rule.subChapterSlug
+      ? (chapter?.sub_chapters ?? []).find((sc: any) => sc.slug === rule.subChapterSlug)
+      : null;
+    const topic = subChapter
+      ? (subChapter?.topics ?? []).find((t: any) => t.slug === rule.topicSlug)
+      : (chapter?.topics ?? []).find((t: any) => t.slug === rule.topicSlug);
 
     if (subject && chapter) {
       return NextResponse.json({
         examGroup: null,
         subject: { id: subject.id, name: subject.name, slug: subject.slug },
         chapter: { id: chapter.id, name: chapter.name, slug: chapter.slug },
-        subChapter: null,
+        subChapter: subChapter ? { id: subChapter.id, name: subChapter.name, slug: subChapter.slug } : null,
         topic: topic ? { id: topic.id, name: topic.name, slug: topic.slug } : null,
         score: 0.9,
         method: "keyword",
@@ -115,6 +108,7 @@ export async function POST(request: Request) {
     group: { id: string; name: string; slug: string } | null;
     subject: { id: string; name: string; slug: string } | null;
     chapter: { id: string; name: string; slug: string } | null;
+    subChapter: { id: string; name: string; slug: string } | null;
     topic: { id: string; name: string; slug: string } | null;
     score: number;
   } | null = null;
@@ -125,13 +119,19 @@ export async function POST(request: Request) {
       const subjectScore = scoreMatch(subject.name, tokens);
       for (const chapter of subject.chapters ?? []) {
         const chapterScore = scoreMatch(chapter.name, tokens);
+        let bestSubChapter: { id: string; name: string; slug: string } | null = null;
         let bestTopic: { id: string; name: string; slug: string } | null = null;
         let bestTopicScore = 0;
-        for (const topic of chapter.topics ?? []) {
-          const topicScore = scoreMatch(topic.name, tokens);
-          if (topicScore > bestTopicScore) {
-            bestTopicScore = topicScore;
-            bestTopic = { id: topic.id, name: topic.name, slug: topic.slug };
+        for (const sub of chapter.sub_chapters ?? []) {
+          const subScore = scoreMatch(sub.name, tokens);
+          for (const topic of sub.topics ?? []) {
+            const topicScore = scoreMatch(topic.name, tokens);
+            const combined = subScore + topicScore;
+            if (combined > bestTopicScore) {
+              bestTopicScore = combined;
+              bestSubChapter = { id: sub.id, name: sub.name, slug: sub.slug };
+              bestTopic = { id: topic.id, name: topic.name, slug: topic.slug };
+            }
           }
         }
         const total = subjectScore + chapterScore + bestTopicScore;
@@ -140,6 +140,7 @@ export async function POST(request: Request) {
             group: { id: group.id, name: group.name, slug: group.slug },
             subject: { id: subject.id, name: subject.name, slug: subject.slug },
             chapter: { id: chapter.id, name: chapter.name, slug: chapter.slug },
+            subChapter: bestSubChapter,
             topic: bestTopic,
             score: total,
           };
@@ -165,7 +166,7 @@ export async function POST(request: Request) {
     examGroup: best.group,
     subject: best.subject,
     chapter: best.chapter,
-    subChapter: null,
+    subChapter: best.subChapter,
     topic: best.topic,
     score: Math.min(best.score / 10, 1.0),
     method: "fuzzy",
