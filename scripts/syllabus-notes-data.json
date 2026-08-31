@@ -152,5 +152,105 @@
         "examples": ["d/dx[sin(x²)] = cos(x²)·2x = 2x cos(x²)", "d/dx[e^(3x)] = 3e^(3x)", "d/dx[ln(sin x)] = (1/sin x)·cos x = cot x", "Implicit: x²+y²=25 → 2x+2y(dy/dx)=0 → dy/dx = -x/y", "d/dx[x^x] = x^x(1+ln x) (logarithmic differentiation)"]
       }
     }
+  },
+  "english": {
+    "grammar": {
+      "subject-verb-agreement": {
+        "key_concepts": ["Subject-verb agreement: singular subjects take singular verbs, plural subjects take plural verbs", "Tricky nouns ending in -s may be singular (Physics, Mathematics) or plural (Police, Cattle)", "Compound subjects with 'and' can be singular (one idea) or plural (separate items)", "Plural-only nouns (clothing, tools) always take plural verbs", "Measurement units (time, money, distance) are singular when considered as a unit"],
+        "formulas": ["Singular subject + singular verb (is, has, does)", "Plural subject + plural verb (are, have, do)", "Compound subject with 'and' → usually plural, unless one idea"],
+        "examples": ["Physics IS a difficult subject", "The police ARE coming", "Bread and butter IS my breakfast (one dish)", "Bread and butter ARE on the table (two items)", "Ten dollars IS a lot of money", "The scissors ARE sharp"]
+      },
+      "tenses": {
+        "key_concepts": ["Present simple: habits, facts, general truths", "Present continuous: actions happening now, temporary situations", "Past simple: completed actions in the past", "Past continuous: ongoing past actions, interrupted actions", "Future simple: predictions, promises, instant decisions", "Present perfect: past actions with present results, experiences"],
+        "formulas": ["Present simple: S + V1(s/es)", "Present continuous: S + am/is/are + V-ing", "Past simple: S + V2", "Past continuous: S + was/were + V-ing", "Future simple: S + will + V1", "Present perfect: S + have/has + V3"],
+        "examples": ["She reads every day (habit)", "She is reading now (current action)", "She read yesterday (completed past)", "She was reading when I called (interrupted)", "She will read tomorrow (future)", "She has read that book (experience)"]
+      },
+      "articles": {
+        "key_concepts": ["'A/An' for indefinite, singular, countable nouns (first mention)", "'The' for definite, specific, or previously mentioned nouns", "'The' for superlatives, unique things, ordinal numbers", "No article for plural/uncountable nouns in general statements", "'A/An' with languages, subjects, meals"],
+        "formulas": ["a + consonant sound (a book, a university)", "an + vowel sound (an apple, an hour)", "the + specific noun (the book I read)", "zero article + general plural/uncountable (I love music)"],
+        "examples": ["I saw a dog (any dog, first mention)", "The dog was brown (specific dog)", "I saw the dog yesterday (previously mentioned)", "Dogs are loyal (general statement, no article)", "She plays the piano (instrument)", "She studies English (subject)"]
+      },
+      "prepositions": {
+        "key_concepts": ["Prepositions of time: at (specific time), on (days/dates), in (months/years/periods)", "Prepositions of place: at (point), on (surface), in (enclosed space)", "Prepositions of direction: to (destination), into (movement inside), onto (movement on surface)", "Fixed prepositional phrases: good at, interested in, afraid of, depend on"],
+        "formulas": ["at + specific time/place (at 5pm, at the door)", "on + days/surfaces (on Monday, on the table)", "in + periods/enclosed spaces (in 2024, in the room)", "to + direction/destination (go to school)"],
+        "examples": ["I wake up at 7am", "The meeting is on Monday", "She was born in 1990", "The book is on the table", "He lives in Kathmandu", "She is good at math", "I am interested in science"]
+      },
+      "conditionals": {
+        "key_concepts": ["Zero conditional: general truths (if + present, present)", "First conditional: real future possibilities (if + present, will + verb)", "Second conditional: unreal present/future (if + past, would + verb)", "Third conditional: unreal past (if + past perfect, would have + V3)"],
+        "formulas": ["Zero: If + present, present", "First: If + present, will + V1", "Second: If + past, would + V1", "Third: If + past perfect, would have + V3"],
+        "examples": ["If you heat water, it boils (zero - fact)", "If it rains, I will stay home (first - real possibility)", "If I had money, I would travel (second - unreal present)", "If I had studied, I would have passed (third - unreal past)"]
+      },
+      "reported-speech": {
+        "key_concepts": ["Reporting verb changes (say → say/tell, ask → ask)", "Tense backshift: present → past, past → past perfect", "Pronoun and time expression changes", "Questions: use if/whether for yes/no, keep question word for wh-questions"],
+        "formulas": ["Direct: He said, 'I am happy'", "Reported: He said that he was happy", "Direct: She asked, 'Where do you live?'", "Reported: She asked where I lived"],
+        "examples": ["'I will come' → He said he would come", "'I am reading' → She said she was reading", "'I went there' → He said he had gone there", "'Will you help?' → She asked if I would help", "'Where do you live?' → He asked where I lived"]
+      },
+      "active-passive": {
+        "key_concepts": ["Passive voice: object becomes subject, verb becomes be + past participle", "Used when doer is unknown, unimportant, or to emphasize the action", "All tenses can be made passive", "Question and negative forms also possible"],
+        "formulas": ["Active: S + V + O", "Passive: O + be + V3 + (by S)", "Present simple: is/are + V3", "Past simple: was/were + V3", "Future: will be + V3"],
+        "examples": ["Active: They build houses. → Passive: Houses are built.", "Active: She wrote the letter. → Passive: The letter was written.", "Active: They will announce the result. → Passive: The result will be announced.", "Active: Someone stole my bike. → Passive: My bike was stolen."]
+      },
+      "modal-verbs": {
+        "key_concepts": ["Can/could: ability, permission, possibility", "May/might: possibility, permission", "Must: necessity, obligation, deduction", "Should: advice, recommendation", "Must not/should not: prohibition"],
+        "formulas": ["can + base verb (ability)", "could + base verb (past ability/polite)", "may + base verb (possibility/permission)", "must + base verb (obligation)", "should + base verb (advice)"],
+        "examples": ["I can swim (ability)", "Could you help me? (polite request)", "It may rain today (possibility)", "You must study hard (obligation)", "You should eat vegetables (advice)", "You must not smoke here (prohibition)"]
+      },
+      "narrative-tenses": {
+        "key_concepts": ["Past simple: main events in sequence", "Past continuous: background actions, interrupted actions", "Past perfect: action before another past action", "Past perfect continuous: ongoing action before another past action"],
+        "formulas": ["Past simple: S + V2", "Past continuous: S + was/were + V-ing", "Past perfect: S + had + V3", "Past perfect continuous: S + had been + V-ing"],
+        "examples": ["I walked to school (past simple)", "I was walking when it rained (past continuous)", "I had finished before he came (past perfect)", "I had been waiting for an hour when the bus came (past perfect continuous)"]
+      }
+    },
+    "writing": {
+      "letter-writing": {
+        "key_concepts": ["Formal letter: sender's address, date, recipient's address, subject, salutation, body, closing", "Informal letter: greeting, body, closing, signature", "Formal: Sir/Madam, Yours faithfully/sincerely", "Informal: Dear [name], Love/Best wishes"],
+        "formulas": ["Formal: Dear Sir/Madam, I am writing to... I would be grateful if... Yours faithfully", "Informal: Dear [Name], I hope you are well... Write back soon. Love, [Name]"],
+        "examples": ["Formal: Application for scholarship. Dear Sir, I am writing to apply for... Yours faithfully", "Informal: Invitation to birthday. Dear Ram, I am having a party... Love, Shyam"]
+      },
+      "essay-writing": {
+        "key_concepts": ["Introduction: hook, background, thesis statement", "Body paragraphs: topic sentence, explanation, example, link", "Conclusion: summary, final thought, call to action"],
+        "formulas": ["Intro: Hook → Background → Thesis", "Body: Topic → Explanation → Example → Link", "Conclusion: Summary → Final thought"],
+        "examples": ["Essay: The Importance of Education. Intro: Education is the backbone of development... Thesis: This essay discusses three key benefits.", "Body: First, education provides economic opportunities... For instance, educated people earn more...", "Conclusion: In conclusion, education transforms lives... We must prioritize it."]
+      },
+      "paragraph-writing": {
+        "key_concepts": ["Topic sentence: main idea of paragraph", "Supporting sentences: evidence, examples, explanations", "Concluding sentence: summary or transition"],
+        "formulas": ["Topic sentence → Supporting details → Concluding sentence"],
+        "examples": ["Topic: Regular exercise is essential for good health. Supporting: It strengthens the heart, improves mood, and helps maintain weight. Concluding: Therefore, daily exercise should be a priority."]
+      },
+      "summary-writing": {
+        "key_concepts": ["Read and understand the passage fully", "Identify main ideas and key points", "Write in your own words, no direct quotes", "Maintain logical flow and coherence", "Keep it within word limit (usually 1/3 of original)"],
+        "formulas": ["Read → Identify main points → Rewrite in own words → Check word count"],
+        "examples": ["Original: 300 words → Summary: 100 words", "Keep: main argument, key evidence, conclusion", "Remove: examples, repetitions, minor details"]
+      },
+      "dialogue-writing": {
+        "key_concepts": ["Use quotation marks for speech", "Action tags and description between dialogue", "Punctuation: comma inside quotes, question marks/periods correctly placed", "Each speaker on new line for scripts"],
+        "formulas": ["'Dialogue here,' said character.", "'Dialogue here?' asked character.", "'Dialogue here!' exclaimed character."],
+        "examples": ["'Have you finished your homework?' asked the teacher.", "'Yes, ma'am,' replied the student.", "'Where is the book?' 'It is on the table,' she said."]
+      }
+    },
+    "reading": {
+      "comprehension": {
+        "key_concepts": ["Read the passage carefully before answering", "Identify the main idea and supporting details", "Understand vocabulary in context", "Distinguish between fact and opinion", "Follow the author's purpose and tone"],
+        "formulas": ["Main idea = what the passage is mainly about", "Supporting details = examples, evidence, explanations", "Inference = what is suggested but not directly stated"],
+        "examples": ["Question: What is the main idea? Answer: The central message or thesis.", "Question: What does 'ubiquitous' mean in paragraph 2? Answer: Look at surrounding words for context clues.", "Question: What can be inferred? Answer: Something not directly stated but logically follows."]
+      },
+      "vocabulary": {
+        "key_concepts": ["Use context clues: definition, example, contrast, synonym", "Root words, prefixes, suffixes help decode meaning", "Common academic vocabulary for exams", "Idioms and phrasal verbs"],
+        "formulas": ["Context clue types: definition (is, means), example (such as), contrast (but, however), synonym (same as)"],
+        "examples": ["'The arid desert had little rain.' Context: arid = dry (desert clue)", "'Unlike his gregarious brother, John was introverted.' Context: gregarious = sociable (unlike clue)", "'Run out of' = exhaust supply", "'Give up' = stop trying"]
+      }
+    },
+    "literature": {
+      "poetry": {
+        "key_concepts": ["Stanza: group of lines in a poem", "Rhyme scheme: pattern of rhymes (ABAB, AABB)", "Metre: rhythmic pattern of syllables", "Figurative language: simile, metaphor, personification, alliteration"],
+        "formulas": ["Simile: using 'like' or 'as' for comparison", "Metaphor: direct comparison without like/as", "Personification: giving human qualities to non-human", "Alliteration: repetition of initial consonant sounds"],
+        "examples": ["Simile: 'Her eyes shone like stars'", "Metaphor: 'Time is a thief'", "Personification: 'The wind whispered through the trees'", "Alliteration: 'Peter Piper picked a peck'"]
+      },
+      "prose": {
+        "key_concepts": ["Narrative elements: character, setting, plot, theme", "Types: short story, novel excerpt, fable, anecdote", "Point of view: first person (I), third person (he/she)", "Tone and mood of the piece"],
+        "formulas": ["Character: protagonist (main), antagonist (opposing)", "Setting: time and place of story", "Plot: exposition → rising action → climax → falling action → resolution"],
+        "examples": ["Protagonist: The main character driving the story", "Antagonist: The opposing force or character", "Setting: 'It was a dark and stormy night...' establishes mood", "Theme: The underlying message or moral"]
+      }
+    }
   }
 }
