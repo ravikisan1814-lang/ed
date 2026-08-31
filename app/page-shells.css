@@ -13,7 +13,11 @@
 .admin-shell,
 .ingest-shell,
 .profile-shell,
-.learn-shell {
+.learn-shell,
+.physics-lab-shell,
+.chemistry-lab-shell,
+.biology-lab-shell,
+.math-lab-shell {
   min-height: 100vh;
   width: 100%;
 }
@@ -951,6 +955,462 @@
   margin: 0 auto;
   padding: 2rem clamp(1rem, 4vw, 2rem) 4rem;
   background: var(--bg);
+}
+
+/* ── Physics Lab Shell ──────────────────────────────────────────────────── */
+.physics-lab-shell {
+  min-height: 100vh;
+}
+.physics-lab-hero {
+  position: relative;
+  padding: clamp(3rem, 8vw, 5rem) clamp(1rem, 4vw, 2rem);
+  text-align: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1e3a5f, #0ea5e9);
+}
+.physics-lab-hero-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  pointer-events: none;
+}
+.physics-lab-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, #1e3a5f 100%);
+  pointer-events: none;
+}
+.physics-lab-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.physics-lab-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  background: rgba(14, 165, 233, 0.2);
+  color: #38bdf8;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(14, 165, 233, 0.3);
+}
+.physics-lab-hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin: 0 0 1rem;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+}
+.physics-lab-hero-desc {
+  font-size: 1rem;
+  color: #bae6fd;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.physics-lab-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.25rem clamp(1rem, 4vw, 2rem);
+  background: #1e3a5f;
+  border-bottom: 1px solid #0ea5e9;
+}
+.physics-lab-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.physics-lab-stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #38bdf8;
+}
+.physics-lab-stat-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.physics-lab-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem clamp(1rem, 4vw, 2rem) 4rem;
+  background: var(--bg);
+}
+
+/* ── Chemistry Lab Shell ────────────────────────────────────────────────── */
+.chemistry-lab-shell {
+  min-height: 100vh;
+}
+.chemistry-lab-hero {
+  position: relative;
+  padding: clamp(3rem, 8vw, 5rem) clamp(1rem, 4vw, 2rem);
+  text-align: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #581c87, #9333ea);
+}
+.chemistry-lab-hero-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  pointer-events: none;
+}
+.chemistry-lab-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, #581c87 100%);
+  pointer-events: none;
+}
+.chemistry-lab-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.chemistry-lab-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  background: rgba(147, 51, 234, 0.2);
+  color: #c084fc;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(147, 51, 234, 0.3);
+}
+.chemistry-lab-hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin: 0 0 1rem;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+}
+.chemistry-lab-hero-desc {
+  font-size: 1rem;
+  color: #d8b4fe;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.chemistry-lab-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.25rem clamp(1rem, 4vw, 2rem);
+  background: #581c87;
+  border-bottom: 1px solid #9333ea;
+}
+.chemistry-lab-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.chemistry-lab-stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #c084fc;
+}
+.chemistry-lab-stat-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.chemistry-lab-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem clamp(1rem, 4vw, 2rem) 4rem;
+  background: var(--bg);
+}
+
+/* ── Biology Lab Shell ──────────────────────────────────────────────────── */
+.biology-lab-shell {
+  min-height: 100vh;
+}
+.biology-lab-hero {
+  position: relative;
+  padding: clamp(3rem, 8vw, 5rem) clamp(1rem, 4vw, 2rem);
+  text-align: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #065f46, #059669);
+}
+.biology-lab-hero-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  pointer-events: none;
+}
+.biology-lab-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, #065f46 100%);
+  pointer-events: none;
+}
+.biology-lab-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.biology-lab-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  background: rgba(5, 150, 105, 0.2);
+  color: #4ade80;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(5, 150, 105, 0.3);
+}
+.biology-lab-hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin: 0 0 1rem;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+}
+.biology-lab-hero-desc {
+  font-size: 1rem;
+  color: #86efac;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.biology-lab-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.25rem clamp(1rem, 4vw, 2rem);
+  background: #065f46;
+  border-bottom: 1px solid #059669;
+}
+.biology-lab-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.biology-lab-stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #4ade80;
+}
+.biology-lab-stat-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.biology-lab-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem clamp(1rem, 4vw, 2rem) 4rem;
+  background: var(--bg);
+}
+
+/* ── Math Lab Shell ─────────────────────────────────────────────────────── */
+.math-lab-shell {
+  min-height: 100vh;
+}
+.math-lab-hero {
+  position: relative;
+  padding: clamp(3rem, 8vw, 5rem) clamp(1rem, 4vw, 2rem);
+  text-align: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #7c2d12, #ea580c);
+}
+.math-lab-hero-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  pointer-events: none;
+}
+.math-lab-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, #7c2d12 100%);
+  pointer-events: none;
+}
+.math-lab-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.math-lab-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  background: rgba(234, 88, 12, 0.2);
+  color: #fb923c;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(234, 88, 12, 0.3);
+}
+.math-lab-hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin: 0 0 1rem;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+}
+.math-lab-hero-desc {
+  font-size: 1rem;
+  color: #fed7aa;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.math-lab-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.25rem clamp(1rem, 4vw, 2rem);
+  background: #7c2d12;
+  border-bottom: 1px solid #ea580c;
+}
+.math-lab-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.math-lab-stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fb923c;
+}
+.math-lab-stat-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.math-lab-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem clamp(1rem, 4vw, 2rem) 4rem;
+  background: var(--bg);
+}
+
+/* ── Lab Subject Cards ──────────────────────────────────────────────────── */
+.lab-subject-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+.lab-subject-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--card);
+  text-decoration: none;
+  color: var(--fg);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.lab-subject-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+.lab-subject-card-gradient {
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  background: linear-gradient(135deg, currentColor, transparent);
+}
+.lab-subject-card-content {
+  position: relative;
+  padding: 1.5rem;
+}
+.lab-subject-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+.lab-subject-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--fg);
+}
+.lab-subject-desc {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+.lab-subject-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+.lab-subject-simulations {
+  color: var(--muted);
+}
+.lab-subject-arrow {
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+.lab-quick-links {
+  margin-top: 2rem;
+}
+.lab-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  color: var(--fg);
+}
+.lab-quick-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.lab-quick-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  text-decoration: none;
+  color: var(--fg);
+  font-weight: 500;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.lab-quick-card:hover {
+  border-color: var(--accent);
+  background: var(--card-locked);
+}
+.lab-quick-icon {
+  font-size: 1.25rem;
+}
+.lab-quick-label {
+  font-size: 0.95rem;
 }
 
 /* ── Gradient text utility ──────────────────────────────────────────────── */
