@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import LayoutShell from "@/app/LayoutShell";
+import ProfileShell from "@/components/page-shells/ProfileShell";
 import { ACCESS_LEVEL_LABELS } from "@/lib/types";
 import BackButton from "@/components/BackButton";
 
@@ -25,19 +26,16 @@ export default async function ProfilePage() {
 
   if (!profile) {
     return (
-      <LayoutShell>
-        <div className="page-shell">
-          <main className="page-main">
-            <div className="profile-page">
-              <h1>Profile</h1>
-              <p className="profile-error">Could not load your profile. Please sign in again.</p>
-              <Link href="/login" className="btn btn-primary">
-                Sign in again
-              </Link>
-            </div>
-          </main>
+      <ProfileShell>
+        <div className="profile-page">
+          <BackButton href="/" />
+          <h1>Profile</h1>
+          <p className="profile-error">Could not load your profile. Please sign in again.</p>
+          <Link href="/login" className="btn btn-primary">
+            Sign in again
+          </Link>
         </div>
-      </LayoutShell>
+      </ProfileShell>
     );
   }
 
@@ -57,8 +55,8 @@ export default async function ProfilePage() {
       : "status-rejected";
 
   return (
-    <LayoutShell>
-      <main className="page-main">
+    <ProfileShell>
+      <main className="profile-content">
         <div className="profile-page">
           <BackButton href="/" />
           <div className="profile-header">
@@ -123,6 +121,6 @@ export default async function ProfilePage() {
           </div>
         </div>
       </main>
-    </LayoutShell>
+    </ProfileShell>
   );
 }

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase";
 import ContentIngest from "@/components/ContentIngest";
 import BackButton from "@/components/BackButton";
 import Link from "next/link";
+import IngestShell from "@/components/page-shells/IngestShell";
 
 export const metadata = {
   title: "Ingest Notes — Admin",
@@ -25,21 +26,23 @@ export default async function IngestPage() {
 
   if (!profile || profile.access_level !== 1 || profile.status !== "approved") {
     return (
-      <div className="admin-denied">
-        <BackButton href="/" />
-        <h1>Access denied</h1>
-        <p>This page is for the site owner only.</p>
-        <Link className="btn btn-primary" href="/">
-          Back to home
-        </Link>
-      </div>
+      <IngestShell>
+        <div className="admin-denied">
+          <BackButton href="/" />
+          <h1>Access denied</h1>
+          <p>This page is for the site owner only.</p>
+          <Link className="btn btn-primary" href="/">
+            Back to home
+          </Link>
+        </div>
+      </IngestShell>
     );
   }
 
   return (
-    <div className="admin-page">
+    <IngestShell>
       <BackButton href="/admin" />
       <ContentIngest />
-    </div>
+    </IngestShell>
   );
 }

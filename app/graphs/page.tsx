@@ -3,6 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import BackButton from "@/components/BackButton";
+import GraphsShell from "@/components/page-shells/GraphsShell";
 import { GraphControls } from "@/components/visuals/GraphControls";
 import type { SceneParams } from "@/components/visuals/ThreeScene";
 
@@ -55,35 +56,28 @@ export default function GraphsPage() {
   };
 
   return (
-    <>
+    <GraphsShell>
       <BackButton href="/" />
-      <section className="hero hero-premium">
-        <span className="hero-badge">Graphs &amp; Figures</span>
-        <h1>Subject-wise figures</h1>
-        <p>Adjust the sliders to see how each concept responds to changes in variables.</p>
-      </section>
-      <section className="content-section">
-        <div className="notes-list">
-          {SUBJECTS.map((subject) => (
-            <article key={subject.slug} className="note-card">
-              <h3 className="note-card-title">{subject.label}</h3>
-              <div className="note-card-teaser">
-                {subject.figures.map((fig, index) => {
-                  const key = `${subject.slug}-${index}`;
-                  const params = figureParams[key] ?? {};
-                  return (
-                    <div key={`${fig.key}-${index}`} className="graph-row">
-                      <span className="graph-label">{fig.label}</span>
-                      <GraphControls figureKey={fig.key} label={fig.label} params={params} onChange={(next) => updateParams(subject.slug, index, next)} />
-                      <ThreeScene figureType={fig.key} topicTitle={`${subject.label} — ${fig.label}`} params={params} />
-                    </div>
-                  );
-                })}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-    </>
+      <div className="notes-list">
+        {SUBJECTS.map((subject) => (
+          <article key={subject.slug} className="note-card">
+            <h3 className="note-card-title">{subject.label}</h3>
+            <div className="note-card-teaser">
+              {subject.figures.map((fig, index) => {
+                const key = `${subject.slug}-${index}`;
+                const params = figureParams[key] ?? {};
+                return (
+                  <div key={`${fig.key}-${index}`} className="graph-row">
+                    <span className="graph-label">{fig.label}</span>
+                    <GraphControls figureKey={fig.key} label={fig.label} params={params} onChange={(next) => updateParams(subject.slug, index, next)} />
+                    <ThreeScene figureType={fig.key} topicTitle={`${subject.label} — ${fig.label}`} params={params} />
+                  </div>
+                );
+              })}
+            </div>
+          </article>
+        ))}
+      </div>
+    </GraphsShell>
   );
 }

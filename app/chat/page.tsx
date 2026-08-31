@@ -2,14 +2,14 @@
 
 import BackButton from "@/components/BackButton";
 import ChatInterface from "@/components/ChatInterface";
+import ChatShell from "@/components/page-shells/ChatShell";
 
 export default function ChatPage() {
   return (
-    <div className="chat-page-wrapper">
-      <BackButton href="/" />
-      <section className="chat-page">
+    <ChatShell>
+      <div className="chat-page">
         <ChatInterface />
-      </section>
-    </div>
+      </div>
+    </ChatShell>
   );
 }

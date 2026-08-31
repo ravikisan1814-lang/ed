@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase";
 import ContentGrid from "@/components/ContentGrid";
 import type { ExamGroupNode } from "@/lib/types";
 import BackButton from "@/components/BackButton";
+import LearnShell from "@/components/page-shells/LearnShell";
 
 export const metadata = {
   title: "Content Catalog — EduPlatform",
@@ -13,8 +14,6 @@ export const metadata = {
 /**
  * Catalog landing page — shows an overview grid of available Exam Groups
  * and quick-access cards for popular subjects.
- *
- * This page lives inside the catalog layout which provides the sidebar.
  */
 export default async function CatalogPage() {
   let examGroups: ExamGroupNode[] = [];
@@ -51,23 +50,18 @@ export default async function CatalogPage() {
   const popularSubjects = allSubjects.slice(0, 6);
 
   return (
-    <div className="catalog-page">
+    <LearnShell
+      title="Content Catalog"
+      description="Browse the complete syllabus hierarchy. Click through exam groups, subjects, chapters, and topics to find the content you need."
+    >
       <BackButton href="/" />
-      <section className="catalog-hero">
-        <h1>Content Catalog</h1>
-        <p>
-          Browse the complete syllabus hierarchy. Click through exam groups,
-          subjects, chapters, and topics to find the content you need.
-        </p>
-      </section>
-
       <section className="content-section">
         <h2>Latest Content</h2>
         <ContentGrid />
       </section>
 
       {examGroups.length === 0 ? (
-        <section className="catalog-empty content-section">
+        <section className="content-section catalog-empty">
           <div className="under-development">
             <span className="ud-icon">🔮</span>
             <span>Under development — will be added in future update</span>
@@ -140,6 +134,6 @@ export default async function CatalogPage() {
           </Link>
         </div>
       </section>
-    </div>
+    </LearnShell>
   );
 }

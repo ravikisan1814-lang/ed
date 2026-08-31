@@ -1,18 +1,14 @@
 "use client";
 
 import BackButton from "@/components/BackButton";
+import InfoShell from "@/components/page-shells/InfoShell";
 
 const OWNER_EMAIL = "ravikisan1814@gmail.com";
 
 export default function InfoPage() {
   return (
-    <div className="info-page">
+    <InfoShell>
       <BackButton href="/" />
-      <section className="info-hero">
-        <h1>Official Rules & Notices</h1>
-        <p>Important guidelines for using Ravikisan&apos;s Platform.</p>
-      </section>
-
       <section className="info-section">
         <h2>Website rules</h2>
         <div className="under-development">
@@ -36,6 +32,6 @@ export default function InfoPage() {
           <a href={"mailto:" + OWNER_EMAIL}>{OWNER_EMAIL}</a>.
         </p>
       </section>
-    </div>
+    </InfoShell>
   );
 }

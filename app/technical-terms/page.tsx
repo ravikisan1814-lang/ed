@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import BackButton from "@/components/BackButton";
 import ParticleField from "@/components/visuals/ParticleField";
 import GeometricMorph from "@/components/visuals/GeometricMorph";
+import TechnicalTermsShell from "@/components/page-shells/TechnicalTermsShell";
 import {
   GradientText,
   AnimatedCounter,
@@ -118,61 +119,8 @@ export default function TechnicalTermsPage() {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   return (
-    <>
+    <TechnicalTermsShell>
       <BackButton href="/" />
-      {/* Particle background */}
-      <div className="technical-terms-bg">
-        <ParticleField count={60} color={theme === "dark" ? "#60a5fa" : "#3b82f6"} speed={0.3} />
-      </div>
-
-      <section className="tech-hero">
-        <div className="tech-hero-content">
-          <FloatingBadge delay={0}><PulseDot color="#22c55e" /></FloatingBadge>
-          <GradientText className="tech-hero-title">Technical Terms</GradientText>
-          <p className="tech-hero-sub">
-            <Typewriter
-              texts={[
-                "Master the fundamental concepts of physics and chemistry",
-                "Visualize abstract principles through interactive 3D models",
-                "Explore the mathematical beauty behind natural phenomena",
-              ]}
-            />
-          </p>
-          <div className="tech-hero-stats">
-            <StatCard label="Core Concepts" value={24} suffix="+" icon={<span>📚</span>} />
-            <StatCard label="3D Simulations" value={12} suffix="" icon={<span>🎮</span>} />
-            <StatCard label="Formulas" value={50} suffix="+" icon={<span>📐</span>} />
-            <StatCard label="Topics Covered" value={8} suffix="" icon={<span>🎯</span>} />
-          </div>
-        </div>
-      </section>
-
-      {/* Theme toggle and controls */}
-      <section className="tech-controls">
-        <div className="tech-control-group">
-          <span className="tech-control-label">Theme</span>
-          <button
-            className={`theme-btn ${theme === "dark" ? "active" : ""}`}
-            onClick={() => setTheme("dark")}
-          >
-            🌙 Dark
-          </button>
-          <button
-            className={`theme-btn ${theme === "light" ? "active" : ""}`}
-            onClick={() => setTheme("light")}
-          >
-            ☀️ Light
-          </button>
-        </div>
-        <div className="tech-control-group">
-          <span className="tech-control-label">Progress</span>
-          <div className="tech-progress">
-            <ProgressRing percent={65} size={50} color="#22c55e" />
-            <span className="tech-progress-label">65% Complete</span>
-          </div>
-        </div>
-      </section>
-
       {/* Terms grid */}
       <section className="tech-terms-grid">
         {TECH_TERMS.map((term, idx) => (
@@ -226,91 +174,6 @@ export default function TechnicalTermsPage() {
         ))}
       </section>
 
-      {/* Interactive animation showcase */}
-      <section className="tech-animation-showcase">
-        <h2>Interactive Animations</h2>
-        <div className="tech-animation-grid">
-          <GlowCard color="#60a5fa">
-            <h3>Particle Field</h3>
-            <ParticleField count={40} color="#60a5fa" speed={0.4} size={2} />
-            <p className="tech-animation-desc">80+ particles with proximity-based connections. Simulates molecular motion.</p>
-          </GlowCard>
-
-          <GlowCard color="#a78bfa">
-            <h3>Geometric Morphing</h3>
-            <div className="morph-container">
-              <GeometricMorph type="sphere" morphSpeed={1.2} />
-            </div>
-            <p className="tech-animation-desc">Smooth interpolation between torus, sphere, cube, and icosahedron geometries.</p>
-          </GlowCard>
-
-          <GlowCard color="#34d399">
-            <h3>Animated Counters</h3>
-            <div className="counter-demo">
-              <div className="counter-item">
-                <span className="counter-value"><AnimatedCounter target={135} suffix="" /></span>
-                <span className="counter-label">Topics</span>
-              </div>
-              <div className="counter-item">
-                <span className="counter-value"><AnimatedCounter target={24} suffix="+" /></span>
-                <span className="counter-label">Concepts</span>
-              </div>
-              <div className="counter-item">
-                <span className="counter-value"><AnimatedCounter target={50} suffix="+" /></span>
-                <span className="counter-label">Formulas</span>
-              </div>
-            </div>
-            <p className="tech-animation-desc">Numbers animate when scrolled into view using IntersectionObserver.</p>
-          </GlowCard>
-
-          <GlowCard color="#f472b6">
-            <h3>Progress Tracking</h3>
-            <div className="progress-demo">
-              {[
-                { label: "Physics", percent: 78, color: "#3b82f6" },
-                { label: "Chemistry", percent: 65, color: "#f97316" },
-                { label: "Mathematics", percent: 92, color: "#22c55e" },
-                { label: "Biology", percent: 45, color: "#ec4899" },
-              ].map((item) => (
-                <div key={item.label} className="progress-item">
-                  <span className="progress-label">{item.label}</span>
-                  <ProgressRing percent={item.percent} size={44} color={item.color} />
-                </div>
-              ))}
-            </div>
-            <p className="tech-animation-desc">Circular progress indicators for tracking learning progress per subject.</p>
-          </GlowCard>
-
-          <GlowCard color="#fbbf24">
-            <h3>Typewriter Effect</h3>
-            <div className="typewriter-demo">
-              <Typewriter
-                texts={["Newton's Laws", "Thermodynamics", "Quantum Mechanics", "Electromagnetism"]}
-                speed={60}
-                pause={1500}
-              />
-            </div>
-            <p className="tech-animation-desc">Rotating text animation typing and deleting key physics topics.</p>
-          </GlowCard>
-
-          <GlowCard color="#22d3ee">
-            <h3>Glow Cards</h3>
-            <div className="glow-demo">
-              <GlowCard color="#3b82f6" className="glow-demo-card">
-                <span>Blue Glow</span>
-              </GlowCard>
-              <GlowCard color="#ef4444" className="glow-demo-card">
-                <span>Red Glow</span>
-              </GlowCard>
-              <GlowCard color="#22c55e" className="glow-demo-card">
-                <span>Green Glow</span>
-              </GlowCard>
-            </div>
-            <p className="tech-animation-desc">Cards with customizable glow effects matching the content theme color.</p>
-          </GlowCard>
-        </div>
-      </section>
-
       {/* Quick Reference */}
       <section className="tech-reference">
         <h2>Quick Reference</h2>
@@ -333,6 +196,6 @@ export default function TechnicalTermsPage() {
           ))}
         </div>
       </section>
-    </>
+    </TechnicalTermsShell>
   );
 }

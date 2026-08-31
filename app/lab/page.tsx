@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import BackButton from "@/components/BackButton";
+import LabShell from "@/components/page-shells/LabShell";
 import MathLab from "@/components/lab/math-lab";
 import ChemistryLab from "@/components/lab/chemistry-lab";
 import PhysicsLab from "@/components/lab/physics-lab";
@@ -18,14 +19,8 @@ export default function LabPage() {
   const [activeTab, setActiveTab] = useState<string>("physics");
 
   return (
-    <>
+    <LabShell>
       <BackButton href="/" />
-      <section className="hero hero-premium">
-        <span className="hero-badge">Lab</span>
-        <h1>Virtual Laboratory</h1>
-        <p>Interactive 3D simulations across all science disciplines.</p>
-      </section>
-
       {/* Tab navigation */}
       <nav className="px-4 pt-4" aria-label="Lab sections">
         <div className="flex flex-wrap gap-2 border-b border-border">
@@ -52,6 +47,6 @@ export default function LabPage() {
         {activeTab === "physics" && <PhysicsLab />}
         {activeTab === "biology" && <BiologyLab />}
       </section>
-    </>
+    </LabShell>
   );
 }

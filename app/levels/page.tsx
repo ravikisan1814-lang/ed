@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import BackButton from "@/components/BackButton";
-import { BookOpen, GraduationCap, ClipboardList, ChevronDown, ChevronUp } from "lucide-react";
+import CurriculumShell from "@/components/page-shells/CurriculumShell";
+import { BookOpen, GraduationCap, ClipboardList, TrendingUp, Users, Target } from "lucide-react";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -107,12 +108,12 @@ const SUBJECTS = [
     description: "Nepali grammar, composition, literature, and comprehension.",
     color: "from-red-500 to-pink-600",
     topics: [
-      "व्याकरण (Grammar)",
-      "लेखन कला (Writing)",
+      "व्यान (Grammar)",
+      "लखन कला (Writing)",
       "वाचन कला (Reading)",
       "साहित्य (Literature)",
       "अनुवाद (Translation)",
-      "निबन्ध (Essay)",
+      "निबध (Essay)",
     ],
   },
   {
@@ -216,9 +217,7 @@ const CURRENT_SYLLABUS = {
 
 function LevelCard({ level }: { level: typeof EDUCATION_LEVELS[0] }) {
   return (
-    <div
-      className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:shadow-lg hover:-translate-y-1"
-    >
+    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:shadow-lg hover:-translate-y-1">
       <div className={`absolute inset-0 bg-gradient-to-br ${level.color} opacity-5 group-hover:opacity-10 transition-opacity`} />
       <div className="relative">
         <div className="flex items-start justify-between mb-4">
@@ -265,9 +264,9 @@ function SubjectCard({ subject }: { subject: typeof SUBJECTS[0] }) {
             aria-label={expanded ? "Collapse" : "Expand"}
           >
             {expanded ? (
-              <ChevronUp className="w-4 h-4 text-muted-foreground" />
+              <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
             ) : (
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
             )}
           </button>
         </div>
@@ -367,64 +366,52 @@ function SyllabusTimeline() {
 
 export default function LevelsPage() {
   return (
-    <>
+    <CurriculumShell>
       <BackButton href="/" />
-      <section className="hero hero-premium">
-        <span className="hero-badge">Curriculum</span>
-        <h1 className="flex items-center gap-2">
-          <BookOpen className="w-6 h-6" />
-          Syllabus & Curriculum
-        </h1>
-        <p className="max-w-2xl mx-auto">
-          Explore the complete NEB (+2) and Loksewa preparation curriculum. Compare the current syllabus with past 5 years of changes.
+
+      {/* Education Levels */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+          <GraduationCap className="w-6 h-6 text-accent" />
+          Education Levels
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          Choose your academic track and explore the curriculum structure.
         </p>
-      </section>
-
-      <section className="content-section">
-        {/* Education Levels */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-            <GraduationCap className="w-6 h-6 text-accent" />
-            Education Levels
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            Choose your academic track and explore the curriculum structure.
-          </p>
-          <div className="grid md:grid-cols-2 gap-4">
-            {EDUCATION_LEVELS.map((level) => (
-              <LevelCard key={level.slug} level={level} />
-            ))}
-          </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          {EDUCATION_LEVELS.map((level) => (
+            <LevelCard key={level.slug} level={level} />
+          ))}
         </div>
+      </div>
 
-        {/* Subjects Grid */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-accent" />
-            NEB (+2) Subjects
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            6 core subjects with detailed topic breakdowns. Click any subject to expand.
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {SUBJECTS.map((subject) => (
-              <SubjectCard key={subject.slug} subject={subject} />
-            ))}
-          </div>
+      {/* Subjects Grid */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+          <BookOpen className="w-6 h-6 text-accent" />
+          NEB (+2) Subjects
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          6 core subjects with detailed topic breakdowns. Click any subject to expand.
+        </p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {SUBJECTS.map((subject) => (
+            <SubjectCard key={subject.slug} subject={subject} />
+          ))}
         </div>
+      </div>
 
-        {/* Syllabus Comparison */}
-        <div>
-          <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-            <ClipboardList className="w-6 h-6 text-accent" />
-            Syllabus History
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            Track changes in the NEB syllabus over the past 5 years. Select a year to see what changed.
-          </p>
-          <SyllabusTimeline />
-        </div>
-      </section>
-    </>
+      {/* Syllabus Comparison */}
+      <div>
+        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+          <ClipboardList className="w-6 h-6 text-accent" />
+          Syllabus History
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          Track changes in the NEB syllabus over the past 5 years. Select a year to see what changed.
+        </p>
+        <SyllabusTimeline />
+      </div>
+    </CurriculumShell>
   );
 }

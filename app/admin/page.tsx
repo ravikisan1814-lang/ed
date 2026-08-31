@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import AdminPanel from "./AdminPanel";
 import BackButton from "@/components/BackButton";
+import AdminShell from "@/components/page-shells/AdminShell";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export default async function AdminPage() {
 
   if (!profile || profile.access_level !== 1 || profile.status !== "approved") {
     return (
-      
+      <AdminShell>
         <div className="admin-denied">
           <h1>Access denied</h1>
           <p>This page is for the site owner only.</p>
@@ -32,14 +33,14 @@ export default async function AdminPage() {
             Back to home
           </Link>
         </div>
-      
+      </AdminShell>
     );
   }
 
   return (
-    <div className="admin-page">
+    <AdminShell>
       <BackButton href="/" />
       <AdminPanel />
-    </div>
+    </AdminShell>
   );
 }
