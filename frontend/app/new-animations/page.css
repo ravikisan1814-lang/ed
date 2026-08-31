@@ -1,0 +1,92 @@
+/* ── New Animations Page ─────────────────────────────────────────────────── */
+
+.new-animations-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #020617 0%, #0f172a 50%, #020617 100%);
+  padding: 2rem;
+}
+
+.animations-hero {
+  text-align: center;
+  padding: 3rem 1rem;
+  margin-bottom: 2rem;
+}
+
+.animations-hero h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  margin: 0 0 1rem;
+  background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 300% 300%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animations-hero p {
+  font-size: 1.25rem;
+  color: #94a3b8;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.animations-section {
+  max-width: 1400px;
+  margin: 0 auto 3rem;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0 0 0.5rem;
+}
+
+.section-header p {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.animations-footer {
+  text-align: center;
+  padding: 2rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .new-animations-page {
+    padding: 1rem;
+  }
+  
+  .animations-hero {
+    padding: 2rem 1rem;
+  }
+  
+  .animations-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .animations-hero p {
+    font-size: 1rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.5rem;
+  }
+}

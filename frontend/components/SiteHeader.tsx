@@ -117,6 +117,9 @@ export default function SiteHeader() {
         <Link href="/technical-terms" className="nav-link" onClick={() => setMenuOpen(false)}>
           Technical Terms
         </Link>
+        <Link href="/new-animations" className="nav-link" onClick={() => setMenuOpen(false)}>
+          3D Animations
+        </Link>
         <Link href="/levels" className="nav-link" onClick={() => setMenuOpen(false)}>
           Curriculum
         </Link>

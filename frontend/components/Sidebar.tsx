@@ -104,6 +104,9 @@ export default function Sidebar() {
           <Link href="/technical-terms" className="sidebar-link" onClick={close}>
             Technical Terms
           </Link>
+          <Link href="/new-animations" className="sidebar-link" onClick={close}>
+            3D Animations
+          </Link>
           <Link href="/lab" className="sidebar-link" onClick={close}>
             Lab
           </Link>
