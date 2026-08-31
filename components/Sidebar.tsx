@@ -95,6 +95,9 @@ export default function Sidebar() {
           <Link href="/info" className="sidebar-link" onClick={close}>
             Rules &amp; Notices
           </Link>
+          <Link href="/levels" className="sidebar-link" onClick={close}>
+            Curriculum
+          </Link>
           <Link href="/graphs" className="sidebar-link" onClick={close}>
             Graph
           </Link>
