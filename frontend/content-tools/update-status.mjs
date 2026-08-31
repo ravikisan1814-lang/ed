@@ -22,7 +22,7 @@ try {
   const branch = execSync('git branch --show-current', { encoding: 'utf8', cwd: join(__dirname, '..') }).trim();
   
   // Get file count
-  const fileCount = execSync('git ls-files | wc -l', { encoding: 'utf8', cwd: join(__dirname, '..') }).trim();
+  const fileCount = execSync('git ls-files | find /c /v ""', { encoding: 'utf8', cwd: join(__dirname, '..') }).trim();
   
   // Get last 5 commits
   const recentCommits = execSync('git log -5 --format="  - %h %s"', { encoding: 'utf8', cwd: join(__dirname, '..') }).trim();
