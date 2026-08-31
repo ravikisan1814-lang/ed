@@ -1,126 +1,104 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type * as THREE from "three";
+import * as THREE from "three";
+
+type MorphType = "sphere" | "torus" | "cube" | "icosahedron";
 
 interface GeometricMorphProps {
-  type?: "cube" | "sphere" | "torus" | "icosahedron";
+  type?: MorphType;
   morphSpeed?: number;
+  color?: string;
   className?: string;
 }
 
-export default function GeometricMorph({ type = "cube", morphSpeed = 1, className }: GeometricMorphProps) {
+export default function GeometricMorph({ 
+  type = "torus", 
+  morphSpeed = 1,
+  color = "#8b5cf6",
+  className = "" 
+}: GeometricMorphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const animFrameRef = useRef<number>(0);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const meshRef = useRef<THREE.Mesh | null>(null);
+  const animationRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    let cancelled = false;
-    let cleanupFn: (() => void) | null = null;
+    const scene = new THREE.Scene();
+    sceneRef.current = scene;
 
-    async function init() {
-      try {
-        const THREE = await import("three");
-        if (cancelled || !container || container.clientWidth === 0) return;
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    cameraRef.current = camera;
 
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
-        camera.position.z = 5;
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        container.appendChild(renderer.domElement);
+    const geometry = new THREE.TorusKnotGeometry(1, 0.3, 128, 32);
+    const material = new THREE.MeshPhysicalMaterial({
+      color,
+      metalness: 0.7,
+      roughness: 0.2,
+      transmission: 0.3,
+      thickness: 2,
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+    meshRef.current = mesh;
 
-        const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambient);
-        const directional = new THREE.DirectionalLight(0xffffff, 0.8);
-        directional.position.set(5, 5, 5);
-        scene.add(directional);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
 
-        let mesh: THREE.Mesh;
-        const material = new THREE.MeshStandardMaterial({
-          color: 0x3b82f6,
-          metalness: 0.3,
-          roughness: 0.4,
-          wireframe: false,
-        });
+    const pointLight = new THREE.PointLight(color, 1, 100);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
 
-        switch (type) {
-          case "cube":
-            mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), material);
-            break;
-          case "sphere":
-            mesh = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), material);
-            break;
-          case "torus":
-            mesh = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.4, 16, 100), material);
-            break;
-          case "icosahedron":
-            mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(1.3, 0), material);
-            break;
-          default:
-            mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), material);
-        }
-
-        scene.add(mesh);
-
-        const resize = () => {
-          const w = container.clientWidth;
-          const h = container.clientHeight;
-          if (w === 0 || h === 0) return;
-          camera.aspect = w / h;
-          camera.updateProjectionMatrix();
-          renderer.setSize(w, h);
-        };
-
-        const observer = new ResizeObserver(resize);
-        observer.observe(container);
-
-        const clock = new THREE.Clock();
-        const animate = () => {
-          animFrameRef.current = requestAnimationFrame(animate);
-          const t = clock.getElapsedTime() * morphSpeed;
-          mesh.rotation.x = t * 0.5;
-          mesh.rotation.y = t * 0.3;
-          renderer.render(scene, camera);
-        };
-        animate();
-
-        cleanupFn = () => {
-          cancelAnimationFrame(animFrameRef.current);
-          observer.disconnect();
-          renderer.dispose();
-          if (renderer.domElement.parentNode === container) {
-            container.removeChild(renderer.domElement);
-          }
-        };
-      } catch (err) {
-        console.error("GeometricMorph initialization failed:", err);
-        if (!cancelled && containerRef.current) {
-          containerRef.current.textContent = "3D visualization failed to load.";
-          containerRef.current.setAttribute("role", "alert");
-        }
+    const animate = () => {
+      animationRef.current = requestAnimationFrame(animate);
+      
+      if (mesh) {
+        mesh.rotation.x += 0.01 * morphSpeed;
+        mesh.rotation.y += 0.015 * morphSpeed;
       }
-    }
 
-    init();
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    const handleResize = () => {
+      if (container && camera && renderer) {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      cancelled = true;
-      cleanupFn?.();
+      window.removeEventListener("resize", handleResize);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      if (renderer) {
+        container.removeChild(renderer.domElement);
+        renderer.dispose();
+      }
+      if (geometry) geometry.dispose();
+      if (material) material.dispose();
     };
-  }, [type, morphSpeed]);
+  }, [color, morphSpeed]);
 
   return (
-    <div
-      ref={containerRef}
-      className={className ?? "three-scene"}
-      aria-label={`Interactive ${type} visualization - drag to rotate`}
-      role="img"
-      tabIndex={0}
-    />
+    <div ref={containerRef} className={`geometric-morph-container ${className}`} />
   );
 }

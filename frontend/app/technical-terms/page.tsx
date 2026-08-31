@@ -3,25 +3,68 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import BackButton from "@/components/BackButton";
-import ParticleField from "@/components/visuals/ParticleField";
-import GeometricMorph from "@/components/visuals/GeometricMorph";
+import New3DAnimation from "@/components/visuals/New3DAnimation";
 import TechnicalTermsShell from "@/components/page-shells/TechnicalTermsShell";
-import {
-  GradientText,
-  AnimatedCounter,
-  GlowCard,
-  Typewriter,
-  ProgressRing,
-  FloatingBadge,
-  PulseDot,
-  Skeleton,
-  StatCard,
-} from "@/components/visuals/Animations";
 import VizPanel from "@/components/visuals/VizPanel";
 
 const ThreeScene = dynamic(() => import("@/components/visuals/ThreeScene"), {
   ssr: false,
 });
+
+// UI Components
+function GradientText({ className, children }: { className?: string; children: React.ReactNode }) {
+  return <span className={`gradient-text ${className}`}>{children}</span>;
+}
+
+function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  
+  return <span>{count}{suffix}</span>;
+}
+
+function GlowCard({ children, color, className }: { children: React.ReactNode; color?: string; className?: string }) {
+  return (
+    <div className={`glow-card ${className}`} style={{ borderColor: color }}>
+      {children}
+    </div>
+  );
+}
+
+function Typewriter({ texts }: { texts: string[] }) {
+  const [index, setIndex] = useState(0);
+  
+  return <span>{texts[index]}</span>;
+}
+
+function ProgressRing({ percent, size = 50 }: { percent: number; size?: number }) {
+  return (
+    <div className="progress-ring" style={{ width: size, height: size }}>
+      {percent}%
+    </div>
+  );
+}
+
+function FloatingBadge({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  return <div className="floating-badge">{children}</div>;
+}
+
+function PulseDot({ color = "#22c55e" }: { color?: string }) {
+  return <span className="pulse-dot" style={{ background: color }} />;
+}
+
+function Skeleton({ className }: { className?: string }) {
+  return <div className={`skeleton ${className}`} />;
+}
+
+function StatCard({ label, value, suffix, icon }: { label: string; value: number; suffix?: string; icon?: React.ReactNode }) {
+  return (
+    <div className="stat-card">
+      {icon && <span className="stat-icon">{icon}</span>}
+      <div className="stat-value">{value}{suffix}</div>
+      <div className="stat-label">{label}</div>
+    </div>
+  );
+}
 
 const TECH_TERMS = [
   {
@@ -116,11 +159,39 @@ const TECH_TERMS = [
 
 export default function TechnicalTermsPage() {
   const [activeTerm, setActiveTerm] = useState<string | null>(null);
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   return (
     <TechnicalTermsShell>
       <BackButton href="/" />
+      
+      {/* Show new 3D animation */}
+      <div className="tech-terms-hero">
+        <div className="tech-terms-hero-content">
+          <FloatingBadge delay={0}><PulseDot color="#22c55e" /></FloatingBadge>
+          <GradientText className="tech-terms-hero-title">Technical Terms</GradientText>
+          <p className="tech-terms-hero-desc">
+            <Typewriter
+              texts={[
+                "Master the fundamental concepts of physics and chemistry",
+                "Visualize abstract principles through interactive 3D models",
+                "Explore the mathematical beauty behind natural phenomena",
+              ]}
+            />
+          </p>
+          <div className="tech-terms-hero-stats">
+            <StatCard label="Core Concepts" value={24} suffix="+" icon={<span>📚</span>} />
+            <StatCard label="3D Simulations" value={12} suffix="" icon={<span>🎮</span>} />
+            <StatCard label="Formulas" value={50} suffix="+" icon={<span>📐</span>} />
+            <StatCard label="Topics Covered" value={8} suffix="" icon={<span>🎯</span>} />
+          </div>
+        </div>
+      </div>
+
+      {/* New 3D Animation */}
+      <div className="tech-terms-3d-section">
+        <New3DAnimation />
+      </div>
+
       {/* Terms grid */}
       <section className="tech-terms-grid">
         {TECH_TERMS.map((term, idx) => (
@@ -167,7 +238,6 @@ export default function TechnicalTermsPage() {
                 <VizPanel title={`${term.name} — 3D Visualization`} defaultOpen={true}>
                   <ThreeScene figureType={term.figureType} topicTitle={term.name} />
                 </VizPanel>
-                <GeometricMorph type="torus" morphSpeed={0.8} />
               </div>
             )}
           </GlowCard>

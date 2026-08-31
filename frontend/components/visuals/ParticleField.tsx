@@ -1,126 +1,106 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type * as THREE from "three";
+
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  color: string;
+}
 
 interface ParticleFieldProps {
   count?: number;
   color?: string;
   speed?: number;
   size?: number;
-  className?: string;
 }
 
-export default function ParticleField({ count = 200, color = "#60a5fa", speed = 1, size = 0.05, className }: ParticleFieldProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const animFrameRef = useRef<number>(0);
+export default function ParticleField({ 
+  count = 60, 
+  color = "#60a5fa", 
+  speed = 0.3, 
+  size = 2 
+}: ParticleFieldProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Particle[]>([]);
+  const animationRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    let cancelled = false;
-    let cleanupFn: (() => void) | null = null;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    async function init() {
-      try {
-        const THREE = await import("three");
-        if (cancelled || !container || container.clientWidth === 0) return;
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
 
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
-        camera.position.z = 5;
+    // Initialize particles
+    particlesRef.current = Array.from({ length: count }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * speed,
+      vy: (Math.random() - 0.5) * speed,
+      size: Math.random() * size + 1,
+      color,
+    }));
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        container.appendChild(renderer.domElement);
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      particlesRef.current.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
 
-        const particles = new THREE.BufferGeometry();
-        const positions = new Float32Array(count * 3);
-        const colors = new Float32Array(count * 3);
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
-        const colorObj = new THREE.Color(color);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      });
 
-        for (let i = 0; i < count; i++) {
-          positions[i * 3] = (Math.random() - 0.5) * 10;
-          positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
-          positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
-
-          colors[i * 3] = colorObj.r;
-          colors[i * 3 + 1] = colorObj.g;
-          colors[i * 3 + 2] = colorObj.b;
-        }
-
-        particles.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-        particles.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-
-        const material = new THREE.PointsMaterial({
-          size,
-          vertexColors: true,
-          transparent: true,
-          opacity: 0.8,
-        });
-
-        const particleSystem = new THREE.Points(particles, material);
-        scene.add(particleSystem);
-
-        const resize = () => {
-          const w = container.clientWidth;
-          const h = container.clientHeight;
-          if (w === 0 || h === 0) return;
-          camera.aspect = w / h;
-          camera.updateProjectionMatrix();
-          renderer.setSize(w, h);
-        };
-
-        const observer = new ResizeObserver(resize);
-        observer.observe(container);
-
-        const clock = new THREE.Clock();
-        const animate = () => {
-          animFrameRef.current = requestAnimationFrame(animate);
-          const t = clock.getElapsedTime() * speed;
-          particleSystem.rotation.y = t * 0.1;
-          particleSystem.rotation.x = Math.sin(t * 0.05) * 0.1;
-          renderer.render(scene, camera);
-        };
-        animate();
-
-        cleanupFn = () => {
-          cancelAnimationFrame(animFrameRef.current);
-          observer.disconnect();
-          renderer.dispose();
-          particles.dispose();
-          material.dispose();
-          if (renderer.domElement.parentNode === container) {
-            container.removeChild(renderer.domElement);
+      // Draw connections
+      particlesRef.current.forEach((p1, i) => {
+        particlesRef.current.slice(i + 1).forEach((p2) => {
+          const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `${color}${Math.floor((1 - dist / 100) * 50).toString(16).padStart(2, "0")}`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
           }
-        };
-      } catch (err) {
-        console.error("ParticleField initialization failed:", err);
-        if (!cancelled && containerRef.current) {
-          containerRef.current.textContent = "Particle visualization failed to load.";
-          containerRef.current.setAttribute("role", "alert");
-        }
-      }
-    }
+        });
+      });
 
-    init();
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
 
     return () => {
-      cancelled = true;
-      cleanupFn?.();
+      window.removeEventListener("resize", resize);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
     };
   }, [count, color, speed, size]);
 
   return (
-    <div
-      ref={containerRef}
-      className={className ?? "three-scene"}
-      aria-label="Animated particle field visualization"
-      role="img"
-      tabIndex={0}
+    <canvas
+      ref={canvasRef}
+      className="particle-field-canvas"
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
     />
   );
 }
